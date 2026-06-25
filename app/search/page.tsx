@@ -101,7 +101,8 @@ export default async function SearchPage({
       </Link>
 
       <div className="mt-4">
-        <SearchBox defaultValue={q} autoFocus />
+        {/* בלי autoFocus — כדי שבמובייל המקלדת לא תיפתח מחדש אחרי כל חיפוש */}
+        <SearchBox defaultValue={q} />
       </div>
 
       {/* מצב ריק — לא הוקלד חיפוש */}

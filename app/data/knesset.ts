@@ -8,6 +8,7 @@ import membersData from "./members.json";
 import votesData from "./votes.json";
 import memberVotesData from "./member-votes.json";
 import photosData from "./photos.json";
+import photosLocalData from "./photos-local.json";
 import biosData from "./bios.json";
 import memberBillsData from "./member-bills.json";
 import partyLogosData from "./party-logos.json";
@@ -269,10 +270,12 @@ export function getBillFinalText(billId: number): BillDoc | null {
   return billDocs[String(billId)] ?? null;
 }
 
-// כתובת תמונת ח"כ מוויקיפדיה (או null אם אין)
+// כתובת תמונת ח"כ. עדיפות לקובץ מקומי (public/mk-photos, ירד מראש),
+// ונפילה לכתובת ויקיפדיה אם התמונה לא ירדה מקומית.
 const photos: Record<string, string> = photosData;
+const photosLocal: Record<string, string> = photosLocalData;
 export function getPhoto(memberId: string): string | null {
-  return photos[memberId] || null;
+  return photosLocal[memberId] || photos[memberId] || null;
 }
 
 // ביוגרפיה מוויקיפדיה (פתיח הערך), ללא ניקוד

@@ -9,7 +9,6 @@ import {
   getSessionProtocol,
   getBillFinalText,
   getPhoto,
-  getBio,
   type VoteChoice,
   type MemberVote,
   type BillCategory,
@@ -247,11 +246,11 @@ export default async function MemberPage({
   const party = getParty(member.partyId)!;
   const groups = getMemberVoteGroups(id);
   const photo = getPhoto(id);
-  const bio = getBio(id);
 
-  // חוקים: מפרידים בין מי שהוא יוזם רשמי לבין חוקים שרק חתם עליהם
+  // חוקים: מבחינים בין מה שהח"כ הוביל בפועל (מציע ראשון) לבין יוזם-עם-אחרים וחתום.
+  // "הוביל" = יוזם רשמי שהוא גם המציע הראשון (Ordinal 1) — המספר הכן והמשמעותי.
   const allBills = getMemberBills(id);
-  const totalInitiated = allBills.filter((b) => b.isInitiator).length;
+  const isLead = (b: MemberBill) => b.isInitiator && b.ordinal === 1;
 
   // סינון לפי טווח זמן שנבחר (ברירת מחדל: הכול)
   const range: BillRangeKey = BILL_RANGES.some((r) => r.key === billsParam)
@@ -261,10 +260,13 @@ export default async function MemberPage({
   const inRange = (b: { lastUpdated: string }) =>
     !cutoff || (b.lastUpdated ? new Date(b.lastUpdated) >= cutoff : false);
 
-  const primaryBills = allBills.filter((b) => b.isInitiator && inRange(b));
-  const cosignedBills = allBills.filter((b) => !b.isInitiator && inRange(b));
-  const passedPrimary = primaryBills.filter((b) => b.category === "passed").length;
-  const shownPrimary = primaryBills.slice(0, MAX_BILLS);
+  // שלוש קבוצות לפי התפקיד הרשמי בחוק, בתוך הטווח שנבחר
+  const ledBills = allBills.filter((b) => isLead(b) && inRange(b)); // מציע ראשון
+  const coInitBills = allBills.filter((b) => b.isInitiator && !isLead(b) && inRange(b)); // יוזם עם אחרים
+  const coSignBills = allBills.filter((b) => !b.isInitiator && inRange(b)); // חתום בלבד
+  const passedLed = ledBills.filter((b) => b.category === "passed").length;
+  const ledAllTime = allBills.filter(isLead).length; // בכל הקדנציה (להשוואה כשיש טווח)
+  const shownLed = ledBills.slice(0, MAX_BILLS);
 
   // הסטטיסטיקה לפי ההצבעה המייצגת של כל חוק (הקריאה הסופית), לא לפי הסתייגויות
   const forCount = groups.filter((g) => g.main.choice === "for").length;
@@ -327,22 +329,6 @@ export default async function MemberPage({
         </div>
       </header>
 
-      {/* ביוגרפיה (מתוך ויקיפדיה) */}
-      {bio && (
-        <details className="group mb-8">
-          <summary className="cursor-pointer list-none">
-            <p className="whitespace-pre-line text-sm leading-relaxed text-muted line-clamp-3 group-open:line-clamp-none">
-              {bio}
-            </p>
-            <span className="mt-1 inline-block text-sm text-blue-600 hover:underline">
-              <span className="group-open:hidden">קרא עוד ▾</span>
-              <span className="hidden group-open:inline">הצג פחות ▴</span>
-            </span>
-          </summary>
-          <p className="mt-2 text-left text-xs text-muted/70">מקור: ויקיפדיה</p>
-        </details>
-      )}
-
       {/* כרטיסי סיכום */}
       <section className="mb-8 grid grid-cols-4 gap-3">
         <div className="rounded-xl bg-card p-4 text-center">
@@ -365,14 +351,7 @@ export default async function MemberPage({
 
       {/* חוקים שקידם — מוצג מעל ההצבעות */}
       <section className="mb-8">
-        <div className="mb-3 flex items-baseline justify-between">
-          <h2 className="text-xl font-bold">חוקים שקידם</h2>
-          {primaryBills.length > MAX_BILLS && (
-            <span className="text-xs text-muted">
-              מוצגים {MAX_BILLS} מתוך {primaryBills.length}
-            </span>
-          )}
-        </div>
+        <h2 className="mb-3 text-xl font-bold">חוקים שקידם</h2>
 
         {allBills.length === 0 ? (
           <p className="rounded-xl border border-border bg-card px-4 py-6 text-center text-sm text-muted">
@@ -383,57 +362,85 @@ export default async function MemberPage({
             {/* בחירת טווח זמן (לפי תאריך עדכון אחרון של החוק) */}
             <BillRangeTabs memberId={id} active={range} />
 
-            {primaryBills.length === 0 && cosignedBills.length === 0 ? (
-              <p className="rounded-xl border border-border bg-card px-4 py-6 text-center text-sm text-muted">
-                אין חוקים בטווח הזמן שנבחר. נסו טווח רחב יותר.
-              </p>
-            ) : (
-              <>
-                <p className="mb-3 text-xs text-muted">
-                  יזם {primaryBills.length}
-                  {range !== "all" && ` מתוך ${totalInitiated}`} הצעות חוק
-                  {passedPrimary > 0 && (
-                    <span className="text-green-700"> · {passedPrimary} התקבלו כחוק</span>
-                  )}
-                  {cosignedBills.length > 0 &&
-                    ` · חתום על עוד ${cosignedBills.length}`}
-                  . לחצו על חוק כדי לראות את שאר היוזמים. מקור: אתר הכנסת.
-                </p>
+            {/* סיכום כן: המספר המרכזי הוא מה שהוביל בפועל (מציע ראשון) */}
+            <p className="mb-1 text-sm">
+              הוביל כ<strong>מציע ראשון</strong>:{" "}
+              <strong>{ledBills.length}</strong> הצעות חוק
+              {passedLed > 0 && (
+                <span className="text-green-700"> · {passedLed} התקבלו כחוק</span>
+              )}
+            </p>
+            <p className="mb-3 text-xs text-muted">
+              בנוסף: יוזם רשמי יחד עם ח&quot;כים אחרים על {coInitBills.length} · חתום על{" "}
+              {coSignBills.length}.
+              {range !== "all" &&
+                ledAllTime !== ledBills.length &&
+                ` (בכל הקדנציה הוביל ${ledAllTime}.)`}{" "}
+              לחצו על חוק כדי לראות את שאר היוזמים. מקור: אתר הכנסת.
+            </p>
 
-                {shownPrimary.length > 0 ? (
-                  <ul className="space-y-2">
-                    {shownPrimary.map((bill) => (
-                      <BillRow key={bill.billId} bill={bill} memberId={id} />
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="mb-3 text-sm text-muted">
-                    אין הצעות שיזם כיוזם רשמי בטווח זה, אך חתום על הצעות (למטה).
+            {/* רשימת ההצעות שהוביל */}
+            {ledBills.length > 0 ? (
+              <>
+                {ledBills.length > MAX_BILLS && (
+                  <p className="mb-2 text-xs text-muted">
+                    מוצגים {MAX_BILLS} מתוך {ledBills.length} שהוביל
                   </p>
                 )}
+                <ul className="space-y-2">
+                  {shownLed.map((bill) => (
+                    <BillRow key={bill.billId} bill={bill} memberId={id} />
+                  ))}
+                </ul>
+              </>
+            ) : (
+              <p className="rounded-xl border border-border bg-card px-4 py-4 text-center text-sm text-muted">
+                לא הוביל הצעות חוק כמציע ראשון בטווח הזה.
+              </p>
+            )}
 
-                {/* חוקים שרק חתם עליהם — מוסתר כברירת מחדל */}
-                {cosignedBills.length > 0 && (
+            {/* יוזם עם אחרים — מכווץ */}
+            {coInitBills.length > 0 && (
               <details className="group mt-3">
                 <summary className="cursor-pointer list-none text-sm text-blue-600 hover:underline">
                   <span className="group-open:hidden">
-                    הצג {cosignedBills.length} הצעות שחתם עליהן ▾
+                    הצג {coInitBills.length} הצעות שהיה יוזם בהן (עם ח&quot;כים אחרים) ▾
                   </span>
                   <span className="hidden group-open:inline">הסתר ▴</span>
                 </summary>
                 <ul className="mt-2 space-y-2">
-                  {cosignedBills.slice(0, MAX_BILLS).map((bill) => (
+                  {coInitBills.slice(0, MAX_BILLS).map((bill) => (
                     <BillRow key={bill.billId} bill={bill} memberId={id} />
                   ))}
                 </ul>
-                {cosignedBills.length > MAX_BILLS && (
+                {coInitBills.length > MAX_BILLS && (
                   <p className="mt-2 text-xs text-muted">
-                    מוצגים {MAX_BILLS} מתוך {cosignedBills.length}
+                    מוצגים {MAX_BILLS} מתוך {coInitBills.length}
                   </p>
                 )}
               </details>
+            )}
+
+            {/* חתום בלבד — מכווץ */}
+            {coSignBills.length > 0 && (
+              <details className="group mt-3">
+                <summary className="cursor-pointer list-none text-sm text-blue-600 hover:underline">
+                  <span className="group-open:hidden">
+                    הצג {coSignBills.length} הצעות שחתם עליהן ▾
+                  </span>
+                  <span className="hidden group-open:inline">הסתר ▴</span>
+                </summary>
+                <ul className="mt-2 space-y-2">
+                  {coSignBills.slice(0, MAX_BILLS).map((bill) => (
+                    <BillRow key={bill.billId} bill={bill} memberId={id} />
+                  ))}
+                </ul>
+                {coSignBills.length > MAX_BILLS && (
+                  <p className="mt-2 text-xs text-muted">
+                    מוצגים {MAX_BILLS} מתוך {coSignBills.length}
+                  </p>
                 )}
-              </>
+              </details>
             )}
           </>
         )}
