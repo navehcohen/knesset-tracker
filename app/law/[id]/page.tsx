@@ -5,6 +5,7 @@ import {
   getBillInitiators,
   getBillVotes,
   getBillFinalText,
+  getBillExplanation,
   getParty,
   type BillCategory,
   type Vote,
@@ -68,6 +69,8 @@ export default async function LawPage({
   const finalText = bill.category === "passed" ? getBillFinalText(billId) : null;
   // תקציר רשמי — אם הוא חובר לאחת ההצבעות של החוק
   const summary = billVotes.find((v) => v.summary)?.summary ?? null;
+  // דברי הסבר — חולצו ממסמך הצעת החוק לקריאה ראשונה
+  const explanation = getBillExplanation(billId);
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-10">
@@ -97,6 +100,43 @@ export default async function LawPage({
           <div className="mb-1 font-semibold text-blue-800">תקציר הצעת החוק</div>
           {summary}
           <div className="mt-1.5 text-xs text-muted/70">מקור: אתר הכנסת</div>
+        </section>
+      )}
+
+      {/* דברי הסבר — מתוך מסמך הצעת החוק לקריאה ראשונה (בלשון היוזם) */}
+      {explanation && (
+        <section className="mb-8">
+          <h2 className="mb-2 text-xl font-bold">דברי הסבר</h2>
+          <details className="group rounded-xl border border-border bg-card px-4 py-3">
+            <summary className="cursor-pointer list-none">
+              <p className="whitespace-pre-line text-sm leading-relaxed text-gray-700 line-clamp-4 group-open:line-clamp-none">
+                {explanation.text}
+              </p>
+              <span className="mt-1 inline-block text-sm text-blue-600 hover:underline">
+                <span className="group-open:hidden">קרא עוד ▾</span>
+                <span className="hidden group-open:inline">הצג פחות ▴</span>
+              </span>
+            </summary>
+
+            {/* מקור + קישור למסמך המלא — בסוף הטקסט, להגעה קלה למקור */}
+            <div className="mt-3 border-t border-border pt-3 text-xs text-muted">
+              <p>
+                מקור: {explanation.source || "מסמך הצעת החוק"}
+                {explanation.date ? ` · ${explanation.date}` : ""} · אתר הכנסת (בלשון היוזם).
+              </p>
+              <p className="mt-1 text-muted/80">
+                הנוסח שהתקבל בפועל עשוי להיות שונה בעקבות דיוני הוועדה.
+              </p>
+              <a
+                href={explanation.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-2 inline-block rounded-full bg-blue-50 px-3 py-1 font-medium text-blue-700 hover:bg-blue-100"
+              >
+                📄 למסמך המלא באתר הכנסת ←
+              </a>
+            </div>
+          </details>
         </section>
       )}
 

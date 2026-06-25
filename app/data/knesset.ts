@@ -14,6 +14,7 @@ import memberBillsData from "./member-bills.json";
 import partyLogosData from "./party-logos.json";
 import sessionProtocolsData from "./session-protocols.json";
 import billDocsData from "./bill-docs.json";
+import billExplanationsData from "./bill-explanations.json";
 
 export type Party = {
   id: string;
@@ -268,6 +269,19 @@ type BillDoc = { url: string; official: boolean };
 const billDocs: Record<string, BillDoc> = billDocsData;
 export function getBillFinalText(billId: number): BillDoc | null {
   return billDocs[String(billId)] ?? null;
+}
+
+// דברי הסבר — חולצו ממסמך "הצעת חוק לקריאה הראשונה" הרשמי (ראו fetch-bill-explanations.mjs).
+// text=הטקסט · source=סוג המסמך · date=תאריך · url=קישור ל-PDF המלא (להגעה למקור).
+export type BillExplanation = {
+  text: string;
+  source: string;
+  date: string;
+  url: string;
+};
+const billExplanations: Record<string, BillExplanation> = billExplanationsData;
+export function getBillExplanation(billId: number): BillExplanation | null {
+  return billExplanations[String(billId)] ?? null;
 }
 
 // כתובת תמונת ח"כ. עדיפות לקובץ מקומי (public/mk-photos, ירד מראש),
