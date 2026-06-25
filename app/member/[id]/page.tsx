@@ -9,6 +9,7 @@ import {
   getSessionProtocol,
   getBillFinalText,
   getPhoto,
+  getMkOfficial,
   type VoteChoice,
   type MemberVote,
   type BillCategory,
@@ -246,6 +247,8 @@ export default async function MemberPage({
   const party = getParty(member.partyId)!;
   const groups = getMemberVoteGroups(id);
   const photo = getPhoto(id);
+  // פרטים רשמיים בסיסיים (לנוכחיים) — מפלגה מוצגת ממילא; כאן שנת לידה + מייל
+  const official = getMkOfficial(id);
 
   // חוקים: מבחינים בין מה שהח"כ הוביל בפועל (מציע ראשון) לבין יוזם-עם-אחרים וחתום.
   // "הוביל" = יוזם רשמי שהוא גם המציע הראשון (Ordinal 1) — המספר הכן והמשמעותי.
@@ -309,6 +312,21 @@ export default async function MemberPage({
         <div className="flex-1">
           <h1 className="text-3xl font-bold">{member.name}</h1>
           <p className="mt-1 text-muted">{party.name}</p>
+          {/* פרטים רשמיים בסיסיים (מהכנסת) — שנת לידה + מייל רשמי */}
+          {official && (official.birthYear || official.email) && (
+            <p className="mt-1 text-xs text-muted">
+              {official.birthYear ? <span>שנת לידה: {official.birthYear}</span> : null}
+              {official.birthYear && official.email ? <span> · </span> : null}
+              {official.email ? (
+                <a
+                  href={`mailto:${official.email}`}
+                  className="text-blue-700 hover:underline"
+                >
+                  ✉ {official.email}
+                </a>
+              ) : null}
+            </p>
+          )}
           {member.roles.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1.5">
               {member.roles.map((role) => (

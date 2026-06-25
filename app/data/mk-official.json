@@ -1,0 +1,722 @@
+{
+  "427": {
+    "faction": "ישראל ביתנו",
+    "birthYear": 1958,
+    "email": "aliberman@knesset.gov.il",
+    "photo": "/mk-photos/official_427.jpg"
+  },
+  "468": {
+    "faction": "הליכוד",
+    "birthYear": 1955,
+    "email": "yiskatz@knesset.gov.il",
+    "photo": "/mk-photos/official_468.jpg"
+  },
+  "526": {
+    "faction": "יהדות התורה",
+    "birthYear": 1952,
+    "email": "mgafni@knesset.gov.il",
+    "photo": "/mk-photos/official_526.jpg"
+  },
+  "532": {
+    "faction": "הליכוד",
+    "birthYear": 1958,
+    "email": "yedelstein@knesset.gov.il",
+    "photo": "/mk-photos/official_532.jpg"
+  },
+  "560": {
+    "faction": "חד\"ש-תע\"ל",
+    "birthYear": 1958,
+    "email": "atibi@knesset.gov.il",
+    "photo": "/mk-photos/official_560.jpg"
+  },
+  "563": {
+    "faction": "יהדות התורה",
+    "birthYear": 1955,
+    "email": "mporush@knesset.gov.il",
+    "photo": "/mk-photos/official_563.jpg"
+  },
+  "965": {
+    "faction": "הליכוד",
+    "birthYear": 1949,
+    "email": "bnetanyahu@knesset.gov.il",
+    "photo": "/mk-photos/official_965.jpg"
+  },
+  "1025": {
+    "faction": "הליכוד",
+    "birthYear": 1974,
+    "email": "ggamliel@knesset.gov.il",
+    "photo": "/mk-photos/official_1025.jpg"
+  },
+  "1056": {
+    "faction": "התאחדות הספרדים שומרי תורה תנועתו של מרן הרב עובדיה יוסף זצ\"ל",
+    "birthYear": 1960,
+    "email": "ymargi@knesset.gov.il",
+    "photo": "/mk-photos/official_1056.jpg"
+  },
+  "2291": {
+    "faction": "התאחדות הספרדים שומרי תורה תנועתו של מרן הרב עובדיה יוסף זצ\"ל",
+    "birthYear": 1959,
+    "email": "aderey@knesset.gov.il",
+    "photo": "/mk-photos/official_2291.jpg"
+  },
+  "4395": {
+    "faction": "הליכוד",
+    "birthYear": 1952,
+    "email": "davraham@knesset.gov.il",
+    "photo": "/mk-photos/official_4395.jpg"
+  },
+  "4397": {
+    "faction": "הימין הממלכתי",
+    "birthYear": 1971,
+    "email": "zelkin@knesset.gov.il",
+    "photo": "/mk-photos/official_4397.jpg"
+  },
+  "11835": {
+    "faction": "יהדות התורה",
+    "birthYear": 1957,
+    "email": "umaklev@knesset.gov.il",
+    "photo": "/mk-photos/official_11835.jpg"
+  },
+  "12938": {
+    "faction": "ישראל ביתנו",
+    "birthYear": 1964,
+    "email": "amarh@knesset.gov.il",
+    "photo": "/mk-photos/official_12938.jpg"
+  },
+  "12951": {
+    "faction": "הליכוד",
+    "birthYear": 1969,
+    "email": "ylevin@knesset.gov.il",
+    "photo": "/mk-photos/official_12951.jpg"
+  },
+  "22151": {
+    "faction": "הימין הממלכתי",
+    "birthYear": 1959,
+    "email": "akramh@knesset.gov.il",
+    "photo": "/mk-photos/official_22151.jpg"
+  },
+  "23551": {
+    "faction": "הציונות הדתית בראשות בצלאל סמוטריץ'",
+    "birthYear": 1960,
+    "email": "ostruk@knesset.gov.il",
+    "photo": "/mk-photos/official_23551.jpg"
+  },
+  "23558": {
+    "faction": "הליכוד",
+    "birthYear": 1960,
+    "email": "dbitan@knesset.gov.il",
+    "photo": "/mk-photos/official_23558.jpg"
+  },
+  "23560": {
+    "faction": "ישראל ביתנו",
+    "birthYear": 1975,
+    "email": "ymalinovsky@knesset.gov.il",
+    "photo": "/mk-photos/official_23560.jpg"
+  },
+  "23565": {
+    "faction": "העבודה",
+    "birthYear": 1966,
+    "email": "michaelim@knesset.gov.il",
+    "photo": "/mk-photos/official_23565.jpg"
+  },
+  "23591": {
+    "faction": "יש עתיד",
+    "birthYear": 1956,
+    "email": "sterne@knesset.gov.il",
+    "photo": "/mk-photos/official_23591.jpg"
+  },
+  "23594": {
+    "faction": "יש עתיד",
+    "birthYear": 1963,
+    "email": "ylapid@knesset.gov.il",
+    "photo": "/mk-photos/official_23594.jpg"
+  },
+  "23597": {
+    "faction": "יש עתיד",
+    "birthYear": 1955,
+    "email": "cohenmeir@knesset.gov.il",
+    "photo": "/mk-photos/official_23597.jpg"
+  },
+  "23631": {
+    "faction": "יש עתיד",
+    "birthYear": 1977,
+    "email": "kelharrar@knesset.gov.il",
+    "photo": "/mk-photos/official_23631.jpg"
+  },
+  "23632": {
+    "faction": "יש עתיד",
+    "birthYear": 1951,
+    "email": "mickeylevy@knesset.gov.il",
+    "photo": "/mk-photos/official_23632.jpg"
+  },
+  "23635": {
+    "faction": "כחול לבן - המחנה הממלכתי",
+    "birthYear": 1981,
+    "email": "ptamano@knesset.gov.il",
+    "photo": "/mk-photos/official_23635.jpg"
+  },
+  "23641": {
+    "faction": "יהדות התורה",
+    "birthYear": 1965,
+    "email": "yakova@knesset.gov.il",
+    "photo": "/mk-photos/official_23641.jpg"
+  },
+  "28513": {
+    "faction": "התאחדות הספרדים שומרי תורה תנועתו של מרן הרב עובדיה יוסף זצ\"ל",
+    "birthYear": 1958,
+    "email": "ybentzur@knesset.gov.il",
+    "photo": "/mk-photos/official_28513.jpg"
+  },
+  "30066": {
+    "faction": "חד\"ש-תע\"ל",
+    "birthYear": 1975,
+    "email": "aymanod@knesset.gov.il",
+    "photo": "/mk-photos/official_30066.jpg"
+  },
+  "30067": {
+    "faction": "חד\"ש-תע\"ל",
+    "birthYear": 1964,
+    "email": "aidat@knesset.gov.il",
+    "photo": "/mk-photos/official_30067.jpg"
+  },
+  "30102": {
+    "faction": "יש עתיד",
+    "birthYear": 1975,
+    "email": "bmerav@knesset.gov.il",
+    "photo": "/mk-photos/official_30102.jpg"
+  },
+  "30106": {
+    "faction": "העבודה",
+    "birthYear": 1986,
+    "email": "naamalazimi@knesset.gov.il",
+    "photo": "/mk-photos/official_30106.jpg"
+  },
+  "30118": {
+    "faction": "הימין הממלכתי",
+    "birthYear": 1984,
+    "email": "shaskel@knesset.gov.il",
+    "photo": "/mk-photos/official_30118.jpg"
+  },
+  "30121": {
+    "faction": "ישראל ביתנו",
+    "birthYear": 1977,
+    "email": "odedfo@knesset.gov.il",
+    "photo": "/mk-photos/official_30121.jpg"
+  },
+  "30300": {
+    "faction": "הליכוד",
+    "birthYear": 1976,
+    "email": "amiro@knesset.gov.il",
+    "photo": "/mk-photos/official_30300.jpg"
+  },
+  "30470": {
+    "faction": "התאחדות הספרדים שומרי תורה תנועתו של מרן הרב עובדיה יוסף זצ\"ל",
+    "birthYear": 1982,
+    "email": "malkielim@knesset.gov.il",
+    "photo": "/mk-photos/official_30470.jpg"
+  },
+  "30601": {
+    "faction": "התאחדות הספרדים שומרי תורה תנועתו של מרן הרב עובדיה יוסף זצ\"ל",
+    "birthYear": 1979,
+    "email": "yazulai@knesset.gov.il",
+    "photo": "/mk-photos/official_30601.jpg"
+  },
+  "30657": {
+    "faction": "כחול לבן - המחנה הממלכתי",
+    "birthYear": 1959,
+    "email": "bgantz@knesset.gov.il",
+    "photo": "/mk-photos/official_30657.jpg"
+  },
+  "30671": {
+    "faction": "יהדות התורה",
+    "birthYear": 1973,
+    "email": "ytesler@knesset.gov.il",
+    "photo": "/mk-photos/official_30671.jpg"
+  },
+  "30672": {
+    "faction": "יהדות התורה",
+    "birthYear": 1971,
+    "email": "ypindrus@knesset.gov.il",
+    "photo": "/mk-photos/official_30672.jpg"
+  },
+  "30682": {
+    "faction": "כחול לבן - המחנה הממלכתי",
+    "birthYear": 1970,
+    "email": "mbiton@knesset.gov.il",
+    "photo": "/mk-photos/official_30682.jpg"
+  },
+  "30683": {
+    "faction": "כחול לבן - המחנה הממלכתי",
+    "birthYear": 1978,
+    "email": "ctropper@knesset.gov.il",
+    "photo": "/mk-photos/official_30683.jpg"
+  },
+  "30685": {
+    "faction": "כחול לבן - המחנה הממלכתי",
+    "birthYear": 1970,
+    "email": "ofarkash@knesset.gov.il",
+    "photo": "/mk-photos/official_30685.jpg"
+  },
+  "30686": {
+    "faction": "יש עתיד",
+    "birthYear": 1983,
+    "email": "mecohen@knesset.gov.il",
+    "photo": "/mk-photos/official_30686.jpg"
+  },
+  "30691": {
+    "faction": "יש עתיד",
+    "birthYear": 1958,
+    "email": "rbenbarak@knesset.gov.il",
+    "photo": "/mk-photos/official_30691.jpg"
+  },
+  "30693": {
+    "faction": "כחול לבן - המחנה הממלכתי",
+    "birthYear": 1977,
+    "email": "eginzburg@knesset.gov.il",
+    "photo": "/mk-photos/official_30693.jpg"
+  },
+  "30694": {
+    "faction": "כחול לבן - המחנה הממלכתי",
+    "birthYear": 1957,
+    "email": "aschuster@knesset.gov.il",
+    "photo": "/mk-photos/official_30694.jpg"
+  },
+  "30695": {
+    "faction": "יש עתיד",
+    "birthYear": 1959,
+    "email": "yoavse@knesset.gov.il",
+    "photo": "/mk-photos/official_30695.jpg"
+  },
+  "30700": {
+    "faction": "הליכוד",
+    "birthYear": 1959,
+    "email": "nbarkat@knesset.gov.il",
+    "photo": "/mk-photos/official_30700.jpg"
+  },
+  "30701": {
+    "faction": "הליכוד",
+    "birthYear": 1980,
+    "email": "okatz@knesset.gov.il",
+    "photo": "/mk-photos/official_30701.jpg"
+  },
+  "30702": {
+    "faction": "הליכוד",
+    "birthYear": 1960,
+    "email": "hatia@knesset.gov.il",
+    "photo": "/mk-photos/official_30702.jpg"
+  },
+  "30704": {
+    "faction": "הליכוד",
+    "birthYear": 1982,
+    "email": "shlomok@knesset.gov.il",
+    "photo": "/mk-photos/official_30704.jpg"
+  },
+  "30705": {
+    "faction": "יש עתיד",
+    "birthYear": 1979,
+    "email": "mshir@knesset.gov.il",
+    "photo": "/mk-photos/official_30705.jpg"
+  },
+  "30706": {
+    "faction": "הליכוד",
+    "birthYear": 1960,
+    "email": "kshitrit@knesset.gov.il",
+    "photo": "/mk-photos/official_30706.jpg"
+  },
+  "30708": {
+    "faction": "הליכוד",
+    "birthYear": 1986,
+    "email": "mgolan@knesset.gov.il",
+    "photo": "/mk-photos/official_30708.jpg"
+  },
+  "30710": {
+    "faction": "הליכוד",
+    "birthYear": 1980,
+    "email": "kallner@knesset.gov.il",
+    "photo": "/mk-photos/official_30710.jpg"
+  },
+  "30711": {
+    "faction": "הליכוד",
+    "birthYear": 1971,
+    "email": "ahalevi@knesset.gov.il",
+    "photo": "/mk-photos/official_30711.jpg"
+  },
+  "30713": {
+    "faction": "רע\"ם",
+    "birthYear": 1974,
+    "email": "mabas@knesset.gov.il",
+    "photo": "/mk-photos/official_30713.jpg"
+  },
+  "30717": {
+    "faction": "הציונות הדתית בראשות בצלאל סמוטריץ'",
+    "birthYear": 1974,
+    "email": "osofer@knesset.gov.il",
+    "photo": "/mk-photos/official_30717.jpg"
+  },
+  "30719": {
+    "faction": "חד\"ש-תע\"ל",
+    "birthYear": 1964,
+    "email": "ocassif@knesset.gov.il",
+    "photo": "/mk-photos/official_30719.jpg"
+  },
+  "30720": {
+    "faction": "יש עתיד",
+    "birthYear": 1988,
+    "email": "ylahav@knesset.gov.il",
+    "photo": "/mk-photos/official_30720.jpg"
+  },
+  "30722": {
+    "faction": "ישראל ביתנו",
+    "birthYear": 1980,
+    "email": "esova@knesset.gov.il",
+    "photo": "/mk-photos/official_30722.jpg"
+  },
+  "30749": {
+    "faction": "התאחדות הספרדים שומרי תורה תנועתו של מרן הרב עובדיה יוסף זצ\"ל",
+    "birthYear": 1965,
+    "email": "mabutbul@knesset.gov.il",
+    "photo": "/mk-photos/official_30749.jpg"
+  },
+  "30752": {
+    "faction": "רע\"ם",
+    "birthYear": 1968,
+    "email": "hak_taha@knesset.gov.il",
+    "photo": "/mk-photos/official_30752.jpg"
+  },
+  "30758": {
+    "faction": "רע\"ם",
+    "birthYear": 1964,
+    "email": "ayasin@knesset.gov.il",
+    "photo": "/mk-photos/official_30758.jpg"
+  },
+  "30765": {
+    "faction": "התאחדות הספרדים שומרי תורה תנועתו של מרן הרב עובדיה יוסף זצ\"ל",
+    "birthYear": 1973,
+    "email": "urielb@knesset.gov.il",
+    "photo": "/mk-photos/official_30765.jpg"
+  },
+  "30770": {
+    "faction": "התאחדות הספרדים שומרי תורה תנועתו של מרן הרב עובדיה יוסף זצ\"ל",
+    "birthYear": 1981,
+    "email": "jtaieb@knesset.gov.il",
+    "photo": "/mk-photos/official_30770.jpg"
+  },
+  "30772": {
+    "faction": "הליכוד",
+    "birthYear": 1969,
+    "email": "nvaturi@knesset.gov.il",
+    "photo": "/mk-photos/official_30772.jpg"
+  },
+  "30775": {
+    "faction": "כחול לבן - המחנה הממלכתי",
+    "birthYear": 1978,
+    "email": "yaelron@knesset.gov.il",
+    "photo": "/mk-photos/official_30775.jpg"
+  },
+  "30776": {
+    "faction": "יש עתיד",
+    "birthYear": 1973,
+    "email": "vbeliak@knesset.gov.il",
+    "photo": "/mk-photos/official_30776.jpg"
+  },
+  "30777": {
+    "faction": "יש עתיד",
+    "birthYear": 1972,
+    "email": "mturpaz@knesset.gov.il",
+    "photo": "/mk-photos/official_30777.jpg"
+  },
+  "30780": {
+    "faction": "יש עתיד",
+    "birthYear": 1985,
+    "email": "rkatz@knesset.gov.il",
+    "photo": "/mk-photos/official_30780.jpg"
+  },
+  "30782": {
+    "faction": "יש עתיד",
+    "birthYear": 1976,
+    "email": "tmazarsky@knesset.gov.il",
+    "photo": "/mk-photos/official_30782.jpg"
+  },
+  "30783": {
+    "faction": "יש עתיד",
+    "birthYear": 1973,
+    "email": "yfridman@knesset.gov.il",
+    "photo": "/mk-photos/official_30783.jpg"
+  },
+  "30799": {
+    "faction": "הימין הממלכתי",
+    "birthYear": 1966,
+    "email": "mbuskila@knesset.gov.il",
+    "photo": "/mk-photos/official_30799.jpg"
+  },
+  "30804": {
+    "faction": "התאחדות הספרדים שומרי תורה תנועתו של מרן הרב עובדיה יוסף זצ\"ל",
+    "birthYear": 1978,
+    "email": "chbiton@knesset.gov.il",
+    "photo": "/mk-photos/official_30804.jpg"
+  },
+  "30807": {
+    "faction": "העבודה",
+    "birthYear": 1973,
+    "email": "gkariv@knesset.gov.il",
+    "photo": "/mk-photos/official_30807.jpg"
+  },
+  "30808": {
+    "faction": "העבודה",
+    "birthYear": 1972,
+    "email": "eraiten@knesset.gov.il",
+    "photo": "/mk-photos/official_30808.jpg"
+  },
+  "30809": {
+    "faction": "הליכוד",
+    "birthYear": 1971,
+    "email": "gdistal@knesset.gov.il",
+    "photo": "/mk-photos/official_30809.jpg"
+  },
+  "30810": {
+    "faction": "הציונות הדתית בראשות בצלאל סמוטריץ'",
+    "birthYear": 1969,
+    "email": "michalwoldiger@knesset.gov.il",
+    "photo": "/mk-photos/official_30810.jpg"
+  },
+  "30811": {
+    "faction": "עוצמה יהודית בראשות איתמר בן גביר",
+    "birthYear": 1976,
+    "email": "ibengvir@knesset.gov.il",
+    "photo": "/mk-photos/official_30811.jpg"
+  },
+  "30812": {
+    "faction": "הציונות הדתית בראשות בצלאל סמוטריץ'",
+    "birthYear": 1980,
+    "email": "srothman@knesset.gov.il",
+    "photo": "/mk-photos/official_30812.jpg"
+  },
+  "30814": {
+    "faction": "נעם - בראשות אבי מעוז",
+    "birthYear": 1956,
+    "email": "amaaoz@knesset.gov.il",
+    "photo": "/mk-photos/official_30814.jpg"
+  },
+  "30820": {
+    "faction": "יש עתיד",
+    "birthYear": 1970,
+    "email": "hak_davidson@knesset.gov.il",
+    "photo": "/mk-photos/official_30820.jpg"
+  },
+  "30830": {
+    "faction": "הציונות הדתית בראשות בצלאל סמוטריץ'",
+    "birthYear": 1982,
+    "email": "ohadt@knesset.gov.il",
+    "photo": "/mk-photos/official_30830.jpg"
+  },
+  "30831": {
+    "faction": "הליכוד",
+    "birthYear": 1955,
+    "email": "edalal@knesset.gov.il",
+    "photo": "/mk-photos/official_30831.jpg"
+  },
+  "30832": {
+    "faction": "הליכוד",
+    "birthYear": 1973,
+    "email": "erevivo@knesset.gov.il",
+    "photo": "/mk-photos/official_30832.jpg"
+  },
+  "30835": {
+    "faction": "הליכוד",
+    "birthYear": 1964,
+    "email": "bbismut@knesset.gov.il",
+    "photo": "/mk-photos/official_30835.jpg"
+  },
+  "30837": {
+    "faction": "יש עתיד",
+    "birthYear": 1965,
+    "email": "dvbiton@knesset.gov.il",
+    "photo": "/mk-photos/official_30837.jpg"
+  },
+  "30839": {
+    "faction": "הליכוד",
+    "birthYear": 1986,
+    "email": "danillouz@knesset.gov.il",
+    "photo": "/mk-photos/official_30839.jpg"
+  },
+  "30840": {
+    "faction": "רע\"ם",
+    "birthYear": 1981,
+    "email": "waleed.alh@knesset.gov.il",
+    "photo": "/mk-photos/official_30840.jpg"
+  },
+  "30842": {
+    "faction": "הליכוד",
+    "birthYear": 1973,
+    "email": "chmelavitzky@knesset.gov.il",
+    "photo": "/mk-photos/official_30842.jpg"
+  },
+  "30843": {
+    "faction": "רע\"ם",
+    "birthYear": 1965,
+    "email": "yschogarat@knesset.gov.il",
+    "photo": "/mk-photos/official_30843.jpg"
+  },
+  "30846": {
+    "faction": "יהדות התורה",
+    "birthYear": 1950,
+    "email": "ygoldknop@knesset.gov.il",
+    "photo": "/mk-photos/official_30846.jpg"
+  },
+  "30847": {
+    "faction": "עוצמה יהודית בראשות איתמר בן גביר",
+    "birthYear": 1992,
+    "email": "yvaserlof@knesset.gov.il",
+    "photo": "/mk-photos/official_30847.jpg"
+  },
+  "30849": {
+    "faction": "עוצמה יהודית בראשות איתמר בן גביר",
+    "birthYear": 1979,
+    "email": "lsun.har@knesset.gov.il",
+    "photo": "/mk-photos/official_30849.jpg"
+  },
+  "30851": {
+    "faction": "יש עתיד",
+    "birthYear": 1962,
+    "email": "mattisarfatti@knesset.gov.il",
+    "photo": "/mk-photos/official_30851.jpg"
+  },
+  "30852": {
+    "faction": "הציונות הדתית בראשות בצלאל סמוטריץ'",
+    "birthYear": 1975,
+    "email": "mosolomon@knesset.gov.il",
+    "photo": "/mk-photos/official_30852.jpg"
+  },
+  "30853": {
+    "faction": "הליכוד",
+    "birthYear": 1972,
+    "email": "mosaada@knesset.gov.il",
+    "photo": "/mk-photos/official_30853.jpg"
+  },
+  "30854": {
+    "faction": "יש עתיד",
+    "birthYear": 1985,
+    "email": "nshiri@knesset.gov.il",
+    "photo": "/mk-photos/official_30854.jpg"
+  },
+  "30857": {
+    "faction": "עוצמה יהודית בראשות איתמר בן גביר",
+    "birthYear": 1979,
+    "email": "abene@knesset.gov.il",
+    "photo": "/mk-photos/official_30857.jpg"
+  },
+  "30859": {
+    "faction": "עוצמה יהודית בראשות איתמר בן גביר",
+    "birthYear": 1956,
+    "email": "tzfoghel@knesset.gov.il",
+    "photo": "/mk-photos/official_30859.jpg"
+  },
+  "30860": {
+    "faction": "הליכוד",
+    "birthYear": 1975,
+    "email": "tgotlib@knesset.gov.il",
+    "photo": "/mk-photos/official_30860.jpg"
+  },
+  "30861": {
+    "faction": "הליכוד",
+    "birthYear": 1956,
+    "email": "shdanino@knesset.gov.il",
+    "photo": "/mk-photos/official_30861.jpg"
+  },
+  "30863": {
+    "faction": "ישראל ביתנו",
+    "birthYear": 1970,
+    "email": "shnir@knesset.gov.il",
+    "photo": "/mk-photos/official_30863.jpg"
+  },
+  "30867": {
+    "faction": "עוצמה יהודית בראשות איתמר בן גביר",
+    "birthYear": 1985,
+    "email": "ykroyzer@knesset.gov.il",
+    "photo": "/mk-photos/official_30867.jpg"
+  },
+  "30868": {
+    "faction": "התאחדות הספרדים שומרי תורה תנועתו של מרן הרב עובדיה יוסף זצ\"ל",
+    "birthYear": 1984,
+    "email": "msyoni@knesset.gov.il",
+    "photo": "/mk-photos/official_30868.jpg"
+  },
+  "30871": {
+    "faction": "יש עתיד",
+    "birthYear": 1979,
+    "email": "shellytm@knesset.gov.il",
+    "photo": "/mk-photos/official_30871.jpg"
+  },
+  "30873": {
+    "faction": "התאחדות הספרדים שומרי תורה תנועתו של מרן הרב עובדיה יוסף זצ\"ל",
+    "birthYear": 1973,
+    "email": "emalul@knesset.gov.il",
+    "photo": "/mk-photos/official_30873.jpg"
+  },
+  "30874": {
+    "faction": "הציונות הדתית בראשות בצלאל סמוטריץ'",
+    "birthYear": 1990,
+    "email": "tzvisuccot@knesset.gov.il",
+    "photo": "/mk-photos/official_30874.jpg"
+  },
+  "30875": {
+    "faction": "הליכוד",
+    "birthYear": 1966,
+    "email": "tmelaku@knesset.gov.il",
+    "photo": "/mk-photos/official_30875.jpg"
+  },
+  "30876": {
+    "faction": "הליכוד",
+    "birthYear": 1974,
+    "email": "oshkalim@knesset.gov.il",
+    "photo": "/mk-photos/official_30876.jpg"
+  },
+  "30877": {
+    "faction": "הליכוד",
+    "birthYear": 1989,
+    "email": "hak_passal@knesset.gov.il",
+    "photo": "/mk-photos/official_30877.jpg"
+  },
+  "30879": {
+    "faction": "הליכוד",
+    "birthYear": 1980,
+    "email": "hak_guetta@knesset.gov.il",
+    "photo": "/mk-photos/official_30879.jpg"
+  },
+  "30880": {
+    "faction": "הליכוד",
+    "birthYear": 1973,
+    "email": "hak_boaron@knesset.gov.il",
+    "photo": "/mk-photos/official_30880.jpg"
+  },
+  "30881": {
+    "faction": "יש עתיד",
+    "birthYear": 1981,
+    "email": "yalevi@knesset.gov.il",
+    "photo": "/mk-photos/official_30881.png"
+  },
+  "30893": {
+    "faction": "הליכוד",
+    "birthYear": 1974,
+    "email": "abbed@knesset.gov.il",
+    "photo": "/mk-photos/official_30893.jpg"
+  },
+  "30894": {
+    "faction": "חד\"ש-תע\"ל",
+    "birthYear": 1979,
+    "email": "samirb@knesset.gov.il",
+    "photo": "/mk-photos/official_30894.jpg"
+  },
+  "30895": {
+    "faction": "יש עתיד",
+    "birthYear": 1986,
+    "email": "aezuz@knesset.gov.il",
+    "photo": "/mk-photos/official_30895.jpg"
+  },
+  "30916": {
+    "faction": "יש עתיד",
+    "birthYear": 1978,
+    "email": "ohaim@knesset.gov.il",
+    "photo": "/mk-photos/official_30916.jpg"
+  }
+}

@@ -9,6 +9,7 @@ import votesData from "./votes.json";
 import memberVotesData from "./member-votes.json";
 import photosData from "./photos.json";
 import photosLocalData from "./photos-local.json";
+import mkOfficialData from "./mk-official.json";
 import biosData from "./bios.json";
 import memberBillsData from "./member-bills.json";
 import partyLogosData from "./party-logos.json";
@@ -284,12 +285,25 @@ export function getBillExplanation(billId: number): BillExplanation | null {
   return billExplanations[String(billId)] ?? null;
 }
 
-// כתובת תמונת ח"כ. עדיפות לקובץ מקומי (public/mk-photos, ירד מראש),
-// ונפילה לכתובת ויקיפדיה אם התמונה לא ירדה מקומית.
+// --- נתונים רשמיים על ח"כים נוכחיים (מה-API הרשמי MkLobby, ראו fetch-mk-official.mjs) ---
+// פרטים בסיסיים אחידים שקיימים לכל 120 הנוכחיים. אפס תלות בויקיפדיה לנוכחיים.
+export type MkOfficial = {
+  faction: string;
+  birthYear: number | null;
+  email: string | null;
+  photo: string | null; // תמונה רשמית מקומית (/mk-photos/official_...)
+};
+const mkOfficial: Record<string, MkOfficial> = mkOfficialData as Record<string, MkOfficial>;
+export function getMkOfficial(memberId: string): MkOfficial | null {
+  return mkOfficial[memberId] ?? null;
+}
+
+// כתובת תמונת ח"כ. עדיפות: תמונה רשמית של הכנסת (נוכחיים) → תמונה מקומית מויקיפדיה
+// (פרשו) → כתובת ויקיפדיה כגיבוי אחרון.
 const photos: Record<string, string> = photosData;
 const photosLocal: Record<string, string> = photosLocalData;
 export function getPhoto(memberId: string): string | null {
-  return photosLocal[memberId] || photos[memberId] || null;
+  return mkOfficial[memberId]?.photo || photosLocal[memberId] || photos[memberId] || null;
 }
 
 // ביוגרפיה מוויקיפדיה (פתיח הערך), ללא ניקוד
