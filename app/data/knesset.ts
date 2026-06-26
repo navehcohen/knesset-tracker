@@ -10,6 +10,7 @@ import memberVotesData from "./member-votes.json";
 import photosData from "./photos.json";
 import photosLocalData from "./photos-local.json";
 import mkOfficialData from "./mk-official.json";
+import committeesData from "./committees.json";
 import biosData from "./bios.json";
 import memberBillsData from "./member-bills.json";
 import partyLogosData from "./party-logos.json";
@@ -305,6 +306,13 @@ export type MkOfficial = {
 const mkOfficial: Record<string, MkOfficial> = mkOfficialData as Record<string, MkOfficial>;
 export function getMkOfficial(memberId: string): MkOfficial | null {
   return mkOfficial[memberId] ?? null;
+}
+
+// --- ועדות שהח"כ חבר בהן (נוכחי, מ-KNS_PersonToPosition, ראו fetch-committees.mjs) ---
+export type Committee = { committee: string; role: string; isChair: boolean };
+const committees: Record<string, Committee[]> = committeesData as Record<string, Committee[]>;
+export function getMemberCommittees(memberId: string): Committee[] {
+  return committees[memberId] ?? [];
 }
 
 // כתובת תמונת ח"כ. עדיפות: תמונה רשמית של הכנסת (נוכחיים) → תמונה מקומית מויקיפדיה

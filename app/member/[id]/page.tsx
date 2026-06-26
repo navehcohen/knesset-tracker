@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
@@ -10,11 +11,27 @@ import {
   getBillFinalText,
   getPhoto,
   getMkOfficial,
+  getMemberCommittees,
   type VoteChoice,
   type MemberVote,
   type BillCategory,
   type MemberBill,
 } from "../../data/knesset";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const member = getMember(id);
+  if (!member) return { title: "חבר כנסת — מעקב כנסת" };
+  const party = getParty(member.partyId);
+  return {
+    title: `${member.name} — מעקב כנסת`,
+    description: `הצבעות, חוקים ופרטים על ${member.name}${party ? ` (${party.name})` : ""} בכנסת ה-25.`,
+  };
+}
 
 const choiceLabel: Record<VoteChoice, string> = {
   for: "בעד",
@@ -249,6 +266,7 @@ export default async function MemberPage({
   const photo = getPhoto(id);
   // פרטים רשמיים בסיסיים (לנוכחיים) — מפלגה מוצגת ממילא; כאן שנת לידה + מייל
   const official = getMkOfficial(id);
+  const committees = getMemberCommittees(id);
 
   // חוקים: מבחינים בין מה שהח"כ הוביל בפועל (מציע ראשון) לבין יוזם-עם-אחרים וחתום.
   // "הוביל" = יוזם רשמי שהוא גם המציע הראשון (Ordinal 1) — המספר הכן והמשמעותי.
@@ -366,6 +384,31 @@ export default async function MemberPage({
           <div className="text-xs text-muted">נמנע</div>
         </div>
       </section>
+
+      {/* ועדות שהח"כ חבר בהן */}
+      {committees.length > 0 && (
+        <section className="mb-8">
+          <h2 className="mb-3 text-xl font-bold">ועדות</h2>
+          <div className="flex flex-wrap gap-2">
+            {committees.map((c) => (
+              <span
+                key={c.committee}
+                className={`rounded-full px-3 py-1 text-xs ${
+                  c.isChair
+                    ? "bg-indigo-100 font-medium text-indigo-800"
+                    : "border border-border text-muted"
+                }`}
+                title={c.role}
+              >
+                {c.isChair ? "★ " : ""}
+                {c.committee}
+                {c.isChair ? ' · יו"ר' : ""}
+              </span>
+            ))}
+          </div>
+          <p className="mt-2 text-xs text-muted/70">מקור: אתר הכנסת.</p>
+        </section>
+      )}
 
       {/* חוקים שקידם — מוצג מעל ההצבעות */}
       <section className="mb-8">

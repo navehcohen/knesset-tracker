@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
@@ -10,6 +11,20 @@ import {
   type BillCategory,
   type Vote,
 } from "../../data/knesset";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const bill = getBill(Number(id));
+  if (!bill) return { title: "הצעת חוק — מעקב כנסת" };
+  return {
+    title: `${bill.name} — מעקב כנסת`,
+    description: `סטטוס, יוזמים, הצבעות ודברי הסבר על ${bill.name}.`,
+  };
+}
 
 // תגית סטטוס — זהה במשמעות לזו שבדף הח"כ
 const billLabel: Record<BillCategory, string> = {

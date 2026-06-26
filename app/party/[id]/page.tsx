@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
@@ -7,6 +8,20 @@ import {
   type Member,
   type Party,
 } from "../../data/knesset";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const party = getParty(id);
+  if (!party) return { title: "מפלגה — מעקב כנסת" };
+  return {
+    title: `${party.name} — מעקב כנסת`,
+    description: `חברי הכנסת של ${party.name} (${party.seats} מנדטים) — הצבעות וחוקים.`,
+  };
+}
 
 // מחזיר את ראשי התיבות של השם (לעיגול האווטאר)
 function initials(name: string): string {
