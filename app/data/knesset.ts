@@ -154,6 +154,7 @@ export type Bill = {
   statusDesc: string;
   category: BillCategory;
   subType: string;
+  lastUpdated: string;
 };
 
 const billsById = new Map<number, Bill>();
@@ -167,9 +168,17 @@ for (const bills of Object.values(memberBills)) {
         statusDesc: b.statusDesc,
         category: b.category,
         subType: b.subType,
+        lastUpdated: b.lastUpdated || "",
       });
     }
   }
+}
+
+// כל החוקים בקטגוריה נתונה (עברו/בהליך/נעצרו), מהמעודכן לישן — לדף עיון החוקים
+export function getBillsByCategory(category: BillCategory): Bill[] {
+  return [...billsById.values()]
+    .filter((b) => b.category === category)
+    .sort((a, b) => (b.lastUpdated || "").localeCompare(a.lastUpdated || ""));
 }
 
 // פרטי הצעת חוק לפי מזהה (undefined אם לא קיים בנתונים)
