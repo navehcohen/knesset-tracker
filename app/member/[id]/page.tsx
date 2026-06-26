@@ -579,10 +579,8 @@ export default async function MemberPage({
                       <TallyBar vote={main} />
                     </summary>
 
-                    {/* תוכן מורחב */}
+                    {/* תוכן מורחב (הכותרת כבר מופיעה למעלה — לא חוזרים עליה) */}
                     <div className="border-t border-border bg-background/40 px-4 py-3 text-sm">
-                      <div className="font-medium">{group.title}</div>
-
                       {group.summary && (
                         <div className="mt-3 rounded-lg bg-blue-50 px-3 py-2.5 text-xs leading-relaxed text-gray-700">
                           <div className="mb-1 font-semibold text-blue-800">
@@ -629,6 +627,14 @@ export default async function MemberPage({
 
                       {/* קישורים שימושיים — בתחתית ההרחבה בלבד */}
                       <div className="mt-3 flex flex-wrap gap-2">
+                        {main.billId && (
+                          <Link
+                            href={`/law/${main.billId}`}
+                            className="inline-block rounded-full bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700 hover:bg-indigo-100"
+                          >
+                            ⚖ לדף החוק המלא ←
+                          </Link>
+                        )}
                         <a
                           href={voteUrl(main.voteId)}
                           target="_blank"

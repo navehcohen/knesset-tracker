@@ -254,6 +254,38 @@ export function getBillVotes(billId: number): Vote[] {
     .sort((a, b) => b.date.localeCompare(a.date));
 }
 
+// --- אינדקס הפוך: לכל הצבעה, מי הצביע ואיך (נבנה מ-member-votes, נתון מקומי) ---
+export type VoteMemberChoice = {
+  memberId: string;
+  name: string;
+  partyId: string;
+  choice: VoteChoice;
+};
+const voteMemberChoices = new Map<number, VoteMemberChoice[]>();
+for (const [memberId, mvs] of Object.entries(memberVotes)) {
+  const m = memberById.get(memberId);
+  if (!m) continue;
+  for (const mv of mvs) {
+    const arr = voteMemberChoices.get(mv.voteId) ?? [];
+    arr.push({ memberId, name: m.name, partyId: m.partyId, choice: mv.choice as VoteChoice });
+    voteMemberChoices.set(mv.voteId, arr);
+  }
+}
+
+// איך כל ח"כ הצביע בהצבעה נתונה, מקובץ לפי בחירה (בעד/נגד/נמנע)
+export function getVoteMemberChoices(voteId: number): Record<VoteChoice, VoteMemberChoice[]> {
+  const out: Record<VoteChoice, VoteMemberChoice[]> = {
+    for: [],
+    against: [],
+    abstain: [],
+    other: [],
+  };
+  for (const c of voteMemberChoices.get(voteId) ?? []) out[c.choice].push(c);
+  for (const k of Object.keys(out) as VoteChoice[])
+    out[k].sort((a, b) => a.name.localeCompare(b.name, "he"));
+  return out;
+}
+
 // פונקציות עזר לשליפת נתונים
 export function getParty(id: string): Party | undefined {
   return parties.find((p) => p.id === id);

@@ -8,9 +8,60 @@ import {
   getBillFinalText,
   getBillExplanation,
   getParty,
+  getVoteMemberChoices,
   type BillCategory,
   type Vote,
+  type VoteChoice,
 } from "../../data/knesset";
+
+const choiceLabel: Record<VoteChoice, string> = {
+  for: "בעד",
+  against: "נגד",
+  abstain: "נמנע",
+  other: "אחר",
+};
+const choiceColor: Record<VoteChoice, string> = {
+  for: "text-green-700",
+  against: "text-red-700",
+  abstain: "text-amber-600",
+  other: "text-gray-500",
+};
+
+// טבלת "איך כל ח"כ הצביע" — מקובצת לפי בחירה, כל שם מקושר לדף הח"כ
+function RollCall({ voteId }: { voteId: number }) {
+  const groups = getVoteMemberChoices(voteId);
+  const order: VoteChoice[] = ["for", "against", "abstain"];
+  const total = order.reduce((n, c) => n + groups[c].length, 0);
+  if (total === 0) return null;
+  return (
+    <details className="group mt-2">
+      <summary className="cursor-pointer list-none text-xs font-medium text-blue-700 hover:underline">
+        <span className="group-open:hidden">איך כל ח&quot;כ הצביע ▾</span>
+        <span className="hidden group-open:inline">הסתר ▴</span>
+      </summary>
+      <div className="mt-2 grid gap-3 sm:grid-cols-3">
+        {order.map((c) => (
+          <div key={c}>
+            <div className={`mb-1 text-xs font-bold ${choiceColor[c]}`}>
+              {choiceLabel[c]} ({groups[c].length})
+            </div>
+            <div className="flex flex-wrap gap-1">
+              {groups[c].map((m) => (
+                <Link
+                  key={m.memberId}
+                  href={`/member/${m.memberId}`}
+                  className="rounded-full border border-border px-2 py-0.5 text-xs hover:bg-card"
+                >
+                  {m.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </details>
+  );
+}
 
 export async function generateMetadata({
   params,
@@ -240,13 +291,15 @@ export default async function LawPage({
                   </div>
                 </div>
                 <TallyBar vote={vote} />
+                {/* טבלת הצבעה אישית של כל ח"כ (מהנתונים שלנו), עם קישור לדף הח"כ */}
+                <RollCall voteId={vote.voteId} />
                 <a
                   href={voteUrl(vote.voteId)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-2 inline-block rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 hover:bg-blue-100"
                 >
-                  🔗 איך כל ח&quot;כ הצביע ←
+                  🔗 לרשומת ההצבעה באתר הכנסת ←
                 </a>
               </li>
             ))}
