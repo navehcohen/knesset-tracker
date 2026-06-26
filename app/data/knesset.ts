@@ -254,6 +254,14 @@ export function getBillVotes(billId: number): Vote[] {
     .sort((a, b) => b.date.localeCompare(a.date));
 }
 
+// ההצבעה המרכזית של חוק — הקריאה הסופית ביותר (לתצוגת סרגל ברשימת החוקים).
+// null אם אין לחוק הצבעות מקושרות בנתונים (רק חלק מהחוקים).
+export function getBillMainVote(billId: number): Vote | null {
+  const vs = getBillVotes(billId);
+  if (!vs.length) return null;
+  return [...vs].sort(compareByReading)[0];
+}
+
 // --- אינדקס הפוך: לכל הצבעה, מי הצביע ואיך (נבנה מ-member-votes, נתון מקומי) ---
 export type VoteMemberChoice = {
   memberId: string;
@@ -422,7 +430,7 @@ function readingRank(decision: string): number {
   return 0; // הסתייגויות ("לדחות את ההצעה") וכל השאר
 }
 
-function compareByReading(a: MemberVote, b: MemberVote): number {
+function compareByReading(a: Vote, b: Vote): number {
   const r = readingRank(b.decision) - readingRank(a.decision);
   if (r !== 0) return r;
   return b.date.localeCompare(a.date);

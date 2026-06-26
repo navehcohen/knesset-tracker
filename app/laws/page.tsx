@@ -1,6 +1,27 @@
 import Link from "next/link";
-import { getBillsByCategory, type BillCategory } from "../data/knesset";
+import { getBillsByCategory, getBillMainVote, type BillCategory } from "../data/knesset";
 import BrowseToggle from "../components/BrowseToggle";
+
+// סרגל הצבעה קומפקטי (איפה שיש הצבעה סופית מקושרת לחוק)
+function MiniTally({ billId }: { billId: number }) {
+  const v = getBillMainVote(billId);
+  if (!v) return null;
+  const total = v.totalFor + v.totalAgainst + v.totalAbstain || 1;
+  return (
+    <div className="mt-2">
+      <div className="flex h-1.5 overflow-hidden rounded-full bg-gray-100">
+        <div className="bg-green-500" style={{ width: `${(v.totalFor / total) * 100}%` }} />
+        <div className="bg-red-500" style={{ width: `${(v.totalAgainst / total) * 100}%` }} />
+        <div className="bg-amber-400" style={{ width: `${(v.totalAbstain / total) * 100}%` }} />
+      </div>
+      <div className="mt-1 flex gap-3 text-[11px] text-muted">
+        <span className="text-green-700">בעד {v.totalFor}</span>
+        <span className="text-red-700">נגד {v.totalAgainst}</span>
+        <span className="text-amber-600">נמנע {v.totalAbstain}</span>
+      </div>
+    </div>
+  );
+}
 
 const CATEGORY_BADGE: Record<BillCategory, string> = {
   passed: "bg-green-100 text-green-800",
@@ -76,11 +97,12 @@ export default async function LawsPage({
             >
               {bill.statusDesc || bill.category}
             </span>
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <p className="font-medium leading-snug">{bill.name}</p>
               {bill.subType ? (
                 <p className="mt-0.5 text-xs text-muted">{bill.subType}</p>
               ) : null}
+              <MiniTally billId={bill.billId} />
             </div>
           </Link>
         ))}
