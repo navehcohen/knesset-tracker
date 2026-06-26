@@ -247,17 +247,17 @@ function TallyBar({ vote }: { vote: MemberVote }) {
   );
 }
 
-const MAX_SHOWN = 150; // כמה חוקים/נושאים להציג בעמוד
+const PER_PAGE_VOTES = 40; // הצבעות/נושאים לעמוד (דפדוף)
 
 export default async function MemberPage({
   params,
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ bills?: string }>;
+  searchParams: Promise<{ bills?: string; vp?: string }>;
 }) {
   const { id } = await params;
-  const { bills: billsParam } = await searchParams;
+  const { bills: billsParam, vp: vpParam } = await searchParams;
   const member = getMember(id);
   if (!member) notFound();
 
@@ -294,7 +294,13 @@ export default async function MemberPage({
   const againstCount = groups.filter((g) => g.main.choice === "against").length;
   const abstainCount = groups.filter((g) => g.main.choice === "abstain").length;
 
-  const shown = groups.slice(0, MAX_SHOWN);
+  // דפדוף בהצבעות (כדי להנגיש את כולן בלי להכביד על הדף)
+  const votePages = Math.max(1, Math.ceil(groups.length / PER_PAGE_VOTES));
+  const votePage = Math.min(Math.max(1, Number(vpParam) || 1), votePages);
+  const shown = groups.slice((votePage - 1) * PER_PAGE_VOTES, votePage * PER_PAGE_VOTES);
+  // קישור לעמוד הצבעות, תוך שמירת טווח-החוקים שנבחר; עוגן #votes כדי לא לקפוץ למעלה
+  const votesPageHref = (p: number) =>
+    `/member/${id}?${range !== "all" ? `bills=${range}&` : ""}vp=${p}#votes`;
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-10">
@@ -385,28 +391,34 @@ export default async function MemberPage({
         </div>
       </section>
 
-      {/* ועדות שהח"כ חבר בהן */}
+      {/* ועדות שהח"כ חבר בהן — מכווץ מאחורי חץ (הרשימה ארוכה) */}
       {committees.length > 0 && (
         <section className="mb-8">
-          <h2 className="mb-3 text-xl font-bold">ועדות</h2>
-          <div className="flex flex-wrap gap-2">
-            {committees.map((c) => (
-              <span
-                key={c.committee}
-                className={`rounded-full px-3 py-1 text-xs ${
-                  c.isChair
-                    ? "bg-indigo-100 font-medium text-indigo-800"
-                    : "border border-border text-muted"
-                }`}
-                title={c.role}
-              >
-                {c.isChair ? "★ " : ""}
-                {c.committee}
-                {c.isChair ? ' · יו"ר' : ""}
-              </span>
-            ))}
-          </div>
-          <p className="mt-2 text-xs text-muted/70">מקור: אתר הכנסת.</p>
+          <details className="group">
+            <summary className="flex cursor-pointer list-none items-center gap-2">
+              <h2 className="text-xl font-bold">ועדות ({committees.length})</h2>
+              <span className="text-sm text-blue-600 group-open:hidden">הצג ▾</span>
+              <span className="hidden text-sm text-blue-600 group-open:inline">הסתר ▴</span>
+            </summary>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {committees.map((c) => (
+                <span
+                  key={c.committee}
+                  className={`rounded-full px-3 py-1 text-xs ${
+                    c.isChair
+                      ? "bg-indigo-100 font-medium text-indigo-800"
+                      : "border border-border text-muted"
+                  }`}
+                  title={c.role}
+                >
+                  {c.isChair ? "★ " : ""}
+                  {c.committee}
+                  {c.isChair ? ' · יו"ר' : ""}
+                </span>
+              ))}
+            </div>
+            <p className="mt-2 text-xs text-muted/70">מקור: אתר הכנסת.</p>
+          </details>
         </section>
       )}
 
@@ -507,13 +519,13 @@ export default async function MemberPage({
         )}
       </section>
 
-      {/* הצבעות אחרונות (מקובצות לפי חוק) */}
-      <section className="mb-8">
+      {/* הצבעות (מקובצות לפי חוק) — עם דפדוף */}
+      <section className="mb-8" id="votes">
         <div className="mb-3 flex items-baseline justify-between">
-          <h2 className="text-xl font-bold">הצבעות אחרונות</h2>
-          {groups.length > MAX_SHOWN && (
+          <h2 className="text-xl font-bold">הצבעות</h2>
+          {groups.length > PER_PAGE_VOTES && (
             <span className="text-xs text-muted">
-              מוצגים {MAX_SHOWN} מתוך {groups.length}
+              עמוד {votePage} מתוך {votePages} · סה״כ {groups.length}
             </span>
           )}
         </div>
@@ -645,6 +657,41 @@ export default async function MemberPage({
               );
             })}
           </ul>
+        )}
+
+        {/* דפדוף בין עמודי ההצבעות */}
+        {votePages > 1 && (
+          <div className="mt-4 flex items-center justify-center gap-3 text-sm">
+            {votePage > 1 ? (
+              <Link
+                href={votesPageHref(votePage - 1)}
+                scroll={false}
+                className="rounded-full border border-border px-4 py-1.5 text-muted hover:bg-card"
+              >
+                → הקודם
+              </Link>
+            ) : (
+              <span className="rounded-full border border-border px-4 py-1.5 opacity-40">
+                → הקודם
+              </span>
+            )}
+            <span className="text-muted">
+              עמוד {votePage} / {votePages}
+            </span>
+            {votePage < votePages ? (
+              <Link
+                href={votesPageHref(votePage + 1)}
+                scroll={false}
+                className="rounded-full border border-border px-4 py-1.5 text-muted hover:bg-card"
+              >
+                הבא ←
+              </Link>
+            ) : (
+              <span className="rounded-full border border-border px-4 py-1.5 opacity-40">
+                הבא ←
+              </span>
+            )}
+          </div>
         )}
       </section>
 
