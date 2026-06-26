@@ -71,7 +71,11 @@ function ListRow({ member }: { member: Member }) {
         <p className="truncate text-sm font-bold leading-tight">{member.name}</p>
         <p className="truncate text-xs text-muted">
           {party?.name ?? ""}
-          {member.status === "former" ? " · פרש מהכנסת" : ""}
+          {member.status === "former"
+            ? member.roles.length > 0
+              ? ` · ${member.roles[0]} · פרש מהכנסת`
+              : " · פרש מהכנסת"
+            : ""}
         </p>
       </div>
     </Link>

@@ -15,7 +15,7 @@ export default function Home() {
       <header className="mb-10 text-center">
         <h1 className="text-3xl font-bold sm:text-4xl">מעקב כנסת</h1>
         <p className="mt-3 text-muted">
-          כל המידע על חברי הכנסת במקום אחד — בחרו מפלגה כדי להתחיל
+          כל המידע על חברי הכנסת במקום אחד — לפי מפלגה, חבר/ת כנסת או חוק
         </p>
       </header>
 

@@ -209,8 +209,9 @@ async function main() {
       status: isCurrent ? "current" : "former",
       // תאריך סיום הכהונה (רק למי שפרש)
       endDate: !isCurrent && p.FinishDate ? p.FinishDate.split("T")[0] : null,
-      // תפקידים נוכחיים (שר, יו"ר וכו') — רק לנוכחיים
-      roles: isCurrent ? rolesByPerson[p.PersonID] || [] : [],
+      // תפקידים נוכחיים (שר, יו"ר וכו'). מצורפים גם לפורשים — כדי שמי שפרש
+      // מהכנסת אך עדיין מכהן כשר (חוק נורבגי) יוצג עם תפקידו.
+      roles: rolesByPerson[p.PersonID] || [],
     });
   }
 

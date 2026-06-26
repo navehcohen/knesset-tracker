@@ -58,9 +58,17 @@ function MemberCard({ member, party }: { member: Member; party: Party }) {
       )}
       <h2 className="text-base font-bold leading-tight">{member.name}</h2>
       {isFormer ? (
-        <span className="mt-2 inline-block rounded-full bg-gray-200 px-2 py-0.5 text-xs text-gray-700">
-          פרש מהכנסת
-        </span>
+        member.roles.length > 0 ? (
+          // פרש ממושב הכנסת אך מכהן בתפקיד (חוק נורבגי) — מציגים את התפקיד
+          <p className="mt-2 text-xs font-medium text-blue-800">
+            {member.roles[0]}
+            <span className="font-normal text-muted"> · פרש מהכנסת</span>
+          </p>
+        ) : (
+          <span className="mt-2 inline-block rounded-full bg-gray-200 px-2 py-0.5 text-xs text-gray-700">
+            פרש מהכנסת
+          </span>
+        )
       ) : member.roles.length > 0 ? (
         <p className="mt-2 text-xs font-medium text-blue-800">
           {member.roles[0]}
