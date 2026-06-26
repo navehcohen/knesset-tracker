@@ -56,60 +56,26 @@ function pickDoc(docs) {
   return pick("קריאה הראשונה") || pick("מוקדם") || null;
 }
 
-// מריץ pdftotext; סובל יציאה לא-אפסית (PDF פגום חלקית) ומשתמש בפלט החלקי אם יש
-function pdfToText(path) {
-  try {
-    return execFileSync("pdftotext", ["-enc", "UTF-8", "-nopgbrk", path, "-"], {
-      encoding: "utf8",
-      maxBuffer: 60 * 1024 * 1024,
-    });
-  } catch (e) {
-    return e.stdout ? e.stdout.toString() : "";
-  }
-}
-
 async function downloadPdf(url, path) {
   const res = await fetch(url, { headers: UA, signal: AbortSignal.timeout(25000) });
   if (!res.ok) throw new Error(`PDF HTTP ${res.status}`);
   await writeFile(path, Buffer.from(await res.arrayBuffer()));
 }
 
-// מחלץ את "דברי הסבר" של החוק הספציפי. ה-PDF הוא לרוב חוברת עם כמה הצעות חוק,
-// אז מבודדים לפי עוגן הערת-השוליים "מספר פנימי: {billId}" שמסיים את קטע החוק שלנו.
-function extractExplanation(text, billId) {
-  const cleaned = clean(text);
-  const bid = String(billId);
-  // עוגן: המופע של ה-billId שמופיע אחרי "מספר פנימי" (הערת השוליים של החוק שלנו)
-  let anchor = -1, from = 0;
-  while (from < cleaned.length) {
-    const i = cleaned.indexOf(bid, from);
-    if (i === -1) break;
-    if (cleaned.slice(Math.max(0, i - 60), i).includes("מספר פנימי")) { anchor = i; break; }
-    from = i + bid.length;
+// מחלץ "דברי הסבר" באמצעות סקריפט פייתון (PyMuPDF/fitz) — קורא נכון פריסת
+// שתי-עמודות (ימין→שמאל) ואזור-הסבר רב-עמודי. ראו scripts/extract_explanation.py.
+const PY_EXTRACT = join(__dirname, "extract_explanation.py");
+function extractExplanation(pdfPath, billId) {
+  let body;
+  try {
+    body = execFileSync("python", [PY_EXTRACT, pdfPath, String(billId)], {
+      encoding: "utf8",
+      maxBuffer: 60 * 1024 * 1024,
+    }).trim();
+  } catch {
+    return null;
   }
-  let start, end;
-  if (anchor !== -1) {
-    start = cleaned.lastIndexOf("דברי הסבר", anchor);
-    const fn = cleaned.lastIndexOf("הצעת חוק מס", anchor); // תחילת הערת השוליים
-    end = fn > start ? fn : anchor;
-  } else {
-    // גיבוי: מ"דברי הסבר" עד הסימן הבא (חוק/הסבר נוסף), כדי לא לגלוש
-    start = cleaned.indexOf("דברי הסבר");
-    if (start !== -1) {
-      const cands = [
-        cleaned.indexOf("הצעת חוק מס", start + 9),
-        cleaned.indexOf("דברי הסבר", start + 9),
-      ].filter((x) => x !== -1);
-      end = cands.length ? Math.min(...cands) : cleaned.length;
-    }
-  }
-  if (start === undefined || start === -1) return null;
-  let body = cleaned.slice(start + "דברי הסבר".length, end).trim();
-  // חיתוך בשורת היוזמים (סוף ההסבר; היוזמים מוצגים ממילא בנפרד) וניקוי שאריות
-  const pm = body.match(/יוזמ(?:ים|ת|י)\s*:/);
-  if (pm && pm.index > 40) body = body.slice(0, pm.index).trim();
-  body = body.replace(/\*+\s*$/, "").trim();
-  if (body.length < 40) return null;
+  if (!body || body.length < 40) return null;
   if (body.length > MAX_LEN) body = body.slice(0, MAX_LEN).trim() + "…";
   return body;
 }
@@ -152,8 +118,7 @@ async function main() {
       const doc = pickDoc(data.value || []);
       if (!doc) { noDoc++; continue; }
       await downloadPdf(doc.FilePath, tmp);
-      const text = pdfToText(tmp);
-      const explanation = extractExplanation(text, billId);
+      const explanation = extractExplanation(tmp, billId);
       if (!explanation) { noExp++; continue; }
       out[billId] = {
         text: explanation,
