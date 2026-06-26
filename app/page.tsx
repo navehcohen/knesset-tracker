@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { parties, getPartyLogo } from "./data/knesset";
+import BrowseToggle from "./components/BrowseToggle";
 
 // שמות מקוצרים לתצוגה בכרטיס (כשהשם הרשמי ארוך מדי)
 const PARTY_SHORT_NAME: Record<string, string> = {
@@ -17,6 +18,9 @@ export default function Home() {
           כל המידע על חברי הכנסת במקום אחד — בחרו מפלגה כדי להתחיל
         </p>
       </header>
+
+      <BrowseToggle active="parties" />
+
 
       <section className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
         {sorted.map((party) => {
