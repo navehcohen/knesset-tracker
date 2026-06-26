@@ -404,14 +404,8 @@ export default async function MemberPage({
               {committees.map((c) => (
                 <span
                   key={c.committee}
-                  className={`rounded-full px-3 py-1 text-xs ${
-                    c.isChair
-                      ? "bg-indigo-100 font-medium text-indigo-800"
-                      : "border border-border text-muted"
-                  }`}
-                  title={c.role}
+                  className="rounded-full border border-border px-3 py-1 text-xs text-muted"
                 >
-                  {c.isChair ? "★ " : ""}
                   {c.committee}
                   {c.isChair ? ' · יו"ר' : ""}
                 </span>

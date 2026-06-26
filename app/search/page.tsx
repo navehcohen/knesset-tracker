@@ -6,6 +6,7 @@ import {
   type Member,
   type Bill,
   type BillCategory,
+  type Vote,
 } from "../data/knesset";
 import SearchBox from "../components/SearchBox";
 
@@ -82,14 +83,38 @@ function BillResult({ bill }: { bill: Bill }) {
   );
 }
 
+// הצבעה עצמאית (אי-אמון, חסינות, הצעה לסדר) — מקשרת לדף ההצבעה
+function VoteResult({ vote }: { vote: Vote }) {
+  return (
+    <Link
+      href={`/vote/${vote.voteId}`}
+      className="flex items-start gap-3 rounded-xl border border-border bg-card p-3 transition hover:-translate-y-0.5 hover:shadow-md"
+    >
+      <span
+        className={`mt-0.5 shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
+          vote.accepted ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+        }`}
+      >
+        {vote.accepted ? "התקבל" : "נדחה"}
+      </span>
+      <div className="min-w-0">
+        <p className="font-medium leading-snug">{vote.title}</p>
+        <p className="mt-0.5 text-xs text-muted">
+          {vote.dateStr} · בעד {vote.totalFor} · נגד {vote.totalAgainst}
+        </p>
+      </div>
+    </Link>
+  );
+}
+
 export default async function SearchPage({
   searchParams,
 }: {
   searchParams: Promise<{ q?: string }>;
 }) {
   const q = ((await searchParams).q ?? "").trim();
-  const { members, bills, memberTotal, billTotal } = searchAll(q);
-  const total = members.length + bills.length;
+  const { members, bills, votes, memberTotal, billTotal, voteTotal } = searchAll(q);
+  const total = members.length + bills.length + votes.length;
   // טקסט כותרת שקוף: "(60 מתוך 134)" כשיש יותר ממה שמוצג, אחרת "(N)"
   const countLabel = (shown: number, found: number) =>
     found > shown ? `${shown} מתוך ${found}` : `${found}`;
@@ -137,6 +162,19 @@ export default async function SearchPage({
               <div className="space-y-2">
                 {bills.map((b) => (
                   <BillResult key={b.billId} bill={b} />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {votes.length > 0 && (
+            <section>
+              <h2 className="mb-3 text-sm font-bold text-muted">
+                הצבעות (אי-אמון, חסינות, הצעות לסדר) ({countLabel(votes.length, voteTotal)})
+              </h2>
+              <div className="space-y-2">
+                {votes.map((v) => (
+                  <VoteResult key={v.voteId} vote={v} />
                 ))}
               </div>
             </section>

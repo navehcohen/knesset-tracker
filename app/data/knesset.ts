@@ -210,18 +210,35 @@ const billCategoryOrder: Record<BillCategory, number> = {
   stopped: 2,
 };
 
+// אינדקס הצבעות עצמאיות (בלי billId) — אי-אמון, בקשות חסינות, הצעות לסדר.
+// אלו לא "הצעות חוק", אז לא באינדקס החוקים — מוסיפים אותן בנפרד לחיפוש.
+// מנכים כפילויות לפי כותרת (שומרים הצבעה אחת מייצגת לכל כותרת).
+const standaloneVoteSearchIndex = (() => {
+  const seen = new Set<string>();
+  const out: { vote: Vote; norm: string }[] = [];
+  for (const v of votes) {
+    if (v.billId || seen.has(v.title)) continue;
+    seen.add(v.title);
+    out.push({ vote: v, norm: normalizeSearch(v.title) });
+  }
+  return out;
+})();
+
 export type SearchResults = {
   members: Member[];
   bills: Bill[];
+  votes: Vote[];
   // הסך-הכול שנמצא לפני חיתוך לתקרה — לשקיפות ("מוצגות 60 מתוך N")
   memberTotal: number;
   billTotal: number;
+  voteTotal: number;
 };
 
-// חיפוש: מחזיר ח"כים והצעות-חוק ששמם מכיל את כל מילות החיפוש.
+// חיפוש: מחזיר ח"כים, הצעות-חוק והצבעות עצמאיות שכותרתם מכילה את כל מילות החיפוש.
 export function searchAll(query: string, limit = 60): SearchResults {
   const q = normalizeSearch(query);
-  if (!q) return { members: [], bills: [], memberTotal: 0, billTotal: 0 };
+  if (!q)
+    return { members: [], bills: [], votes: [], memberTotal: 0, billTotal: 0, voteTotal: 0 };
   const tokens = q.split(" ").filter(Boolean);
   const match = (norm: string) => tokens.every((t) => norm.includes(t));
 
@@ -238,11 +255,19 @@ export function searchAll(query: string, limit = 60): SearchResults {
       return a.name.localeCompare(b.name, "he");
     });
 
+  // הצבעות עצמאיות — מהחדש לישן
+  const allVotes = standaloneVoteSearchIndex
+    .filter((x) => match(x.norm))
+    .map((x) => x.vote)
+    .sort((a, b) => b.date.localeCompare(a.date));
+
   return {
     members: allMembers.slice(0, limit),
     bills: allBills.slice(0, limit),
+    votes: allVotes.slice(0, limit),
     memberTotal: allMembers.length,
     billTotal: allBills.length,
+    voteTotal: allVotes.length,
   };
 }
 
@@ -260,6 +285,11 @@ export function getBillMainVote(billId: number): Vote | null {
   const vs = getBillVotes(billId);
   if (!vs.length) return null;
   return [...vs].sort(compareByReading)[0];
+}
+
+// הצבעה בודדת לפי מזהה (לדף ההצבעה /vote/[id])
+export function getVote(voteId: number): Vote | null {
+  return voteById.get(voteId) ?? null;
 }
 
 // --- אינדקס הפוך: לכל הצבעה, מי הצביע ואיך (נבנה מ-member-votes, נתון מקומי) ---
