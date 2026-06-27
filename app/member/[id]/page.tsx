@@ -194,6 +194,12 @@ function BillRow({ bill, memberId }: { bill: MemberBill; memberId: string }) {
           )}
 
           <div className="mt-3 flex flex-wrap gap-2">
+            <Link
+              href={`/law/${bill.billId}`}
+              className="inline-block rounded-full bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700 hover:bg-indigo-100"
+            >
+              ⚖ לדף החוק המלא ←
+            </Link>
             <a
               href={billUrl(bill.billId)}
               target="_blank"
