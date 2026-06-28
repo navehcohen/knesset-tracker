@@ -392,23 +392,23 @@ export default async function MemberPage({
     memberHref(id, { bills: range, status, vp: p, hash: "#votes" });
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-4 py-10">
+    <main className="mx-auto w-full max-w-3xl px-4 py-6 sm:py-10">
       <BackButton fallback={`/party/${party.id}`} />
 
       {/* כותרת הפרופיל */}
-      <header className="mb-8 mt-4 flex items-center gap-4">
+      <header className="mb-6 mt-4 flex items-center gap-4 sm:mb-8">
         {photo ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={photo}
             alt={member.name}
-            className={`h-20 w-20 rounded-full object-cover ${
+            className={`h-16 w-16 rounded-full object-cover sm:h-20 sm:w-20 ${
               member.status === "former" ? "grayscale" : ""
             }`}
           />
         ) : (
           <div
-            className="flex h-20 w-20 items-center justify-center rounded-full text-xl font-bold text-white"
+            className="flex h-16 w-16 items-center justify-center rounded-full text-xl font-bold text-white sm:h-20 sm:w-20"
             style={{
               backgroundColor:
                 member.status === "former" ? "#9ca3af" : party.color,
@@ -417,8 +417,8 @@ export default async function MemberPage({
             {initials(member.name)}
           </div>
         )}
-        <div className="flex-1">
-          <h1 className="text-3xl font-bold">{member.name}</h1>
+        <div className="min-w-0 flex-1">
+          <h1 className="text-2xl font-bold sm:text-3xl">{member.name}</h1>
           <p className="mt-1 text-muted">{party.name}</p>
           {/* פרטים רשמיים בסיסיים (מהכנסת) — שנת לידה + מייל רשמי */}
           {official && (official.birthYear || official.email) && (

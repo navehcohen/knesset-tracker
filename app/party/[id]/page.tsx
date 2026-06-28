@@ -36,7 +36,7 @@ function MemberCard({ member, party }: { member: Member; party: Party }) {
   return (
     <Link
       href={`/member/${member.id}`}
-      className={`group block rounded-2xl border border-border bg-card p-5 transition hover:-translate-y-0.5 hover:shadow-md ${
+      className={`group block rounded-2xl border border-border bg-card p-3 transition hover:-translate-y-0.5 hover:shadow-md sm:p-5 ${
         isFormer ? "opacity-70" : ""
       }`}
     >
@@ -45,19 +45,19 @@ function MemberCard({ member, party }: { member: Member; party: Party }) {
         <img
           src={photo}
           alt={member.name}
-          className={`mb-3 h-16 w-16 rounded-full object-cover ${
+          className={`mb-2 h-14 w-14 rounded-full object-cover sm:mb-3 sm:h-16 sm:w-16 ${
             isFormer ? "grayscale" : ""
           }`}
         />
       ) : (
         <div
-          className="mb-3 flex h-16 w-16 items-center justify-center rounded-full text-sm font-bold text-white"
+          className="mb-2 flex h-14 w-14 items-center justify-center rounded-full text-sm font-bold text-white sm:mb-3 sm:h-16 sm:w-16"
           style={{ backgroundColor: isFormer ? "#9ca3af" : party.color }}
         >
           {initials(member.name)}
         </div>
       )}
-      <h2 className="text-base font-bold leading-tight">{member.name}</h2>
+      <h2 className="text-sm font-bold leading-tight sm:text-base">{member.name}</h2>
       {isFormer ? (
         member.roles.length > 0 ? (
           // פרש ממושב הכנסת אך מכהן בתפקיד (חוק נורבגי) — מציגים את התפקיד
@@ -95,21 +95,21 @@ export default async function PartyPage({
   const former = members.filter((m) => m.status === "former");
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-4 py-10">
+    <main className="mx-auto w-full max-w-5xl px-4 py-6 sm:py-10">
       <BackButton fallback="/" />
 
-      <header className="mb-8 mt-4 flex items-center gap-4">
+      <header className="mb-6 mt-4 flex items-center gap-4 sm:mb-8">
         <div
           className="h-12 w-3 rounded-full"
           style={{ backgroundColor: party.color }}
         />
         <div>
-          <h1 className="text-3xl font-bold">{party.name}</h1>
+          <h1 className="text-2xl font-bold sm:text-3xl">{party.name}</h1>
           <p className="mt-1 text-muted">{party.seats} חברי כנסת</p>
         </div>
       </header>
 
-      <section className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+      <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
         {current.map((member) => (
           <MemberCard key={member.id} member={member} party={party} />
         ))}
@@ -120,7 +120,7 @@ export default async function PartyPage({
           <h2 className="mb-4 text-lg font-bold text-muted">
             כיהנו בעבר ופרשו ({former.length})
           </h2>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
             {former.map((member) => (
               <MemberCard key={member.id} member={member} party={party} />
             ))}

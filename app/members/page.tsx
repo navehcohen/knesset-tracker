@@ -46,12 +46,12 @@ function GridCard({ member }: { member: Member }) {
   return (
     <Link
       href={`/member/${member.id}`}
-      className={`flex flex-col items-center rounded-2xl border border-border bg-card p-4 text-center transition hover:-translate-y-0.5 hover:shadow-md ${
+      className={`flex flex-col items-center rounded-2xl border border-border bg-card p-3 text-center transition hover:-translate-y-0.5 hover:shadow-md sm:p-4 ${
         member.status === "former" ? "opacity-70" : ""
       }`}
     >
-      <Avatar member={member} party={party} size={72} />
-      <h2 className="mt-3 text-sm font-bold leading-tight">{member.name}</h2>
+      <Avatar member={member} party={party} size={60} />
+      <h2 className="mt-2 text-sm font-bold leading-tight sm:mt-3">{member.name}</h2>
       <p className="mt-1 line-clamp-2 text-xs text-muted">{party?.name ?? ""}</p>
     </Link>
   );
@@ -116,7 +116,7 @@ export default async function MembersPage({
   const off = "border border-border text-muted hover:bg-card";
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-4 py-10">
+    <main className="mx-auto w-full max-w-5xl px-4 py-6 sm:py-10">
       <BrowseToggle active="members" />
 
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">

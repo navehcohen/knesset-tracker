@@ -11,18 +11,18 @@ export default function Home() {
   const sorted = [...parties].sort((a, b) => b.seats - a.seats);
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-4 py-10">
-      <header className="mb-10 text-center">
-        <h1 className="text-3xl font-bold sm:text-4xl">מעקב כנסת 25</h1>
-        <p className="mt-3 text-muted">
+    <main className="mx-auto w-full max-w-5xl px-4 py-6 sm:py-10">
+      <header className="mb-6 text-center sm:mb-10">
+        {/* גודל נוזלי: גדל/מתכווץ ברצף לפי רוחב המסך (clamp) — בלי קפיצות */}
+        <h1 className="text-[clamp(1.5rem,6vw,2.25rem)] font-bold">מעקב כנסת 25</h1>
+        <p className="mt-2 text-sm text-muted sm:mt-3 sm:text-base">
           כל המידע על חברי הכנסת במקום אחד — לפי מפלגה, חבר/ת כנסת או חוק
         </p>
       </header>
 
       <BrowseToggle active="parties" />
 
-
-      <section className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+      <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
         {sorted.map((party) => {
           const logo = getPartyLogo(party.id);
           const displayName = PARTY_SHORT_NAME[party.id] ?? party.name;
@@ -30,16 +30,16 @@ export default function Home() {
             <Link
               key={party.id}
               href={`/party/${party.id}`}
-              className="group flex h-36 flex-col rounded-2xl border border-border bg-card p-4 transition hover:-translate-y-0.5 hover:shadow-md"
+              className="group flex h-28 flex-col rounded-2xl border border-border bg-card p-3 transition hover:-translate-y-0.5 hover:shadow-md sm:h-36 sm:p-4"
             >
               {/* לוגו המפלגה */}
-              <div className="mb-2 flex h-10 items-center justify-center">
+              <div className="mb-1.5 flex h-8 items-center justify-center sm:mb-2 sm:h-10">
                 {logo ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={logo}
                     alt={`לוגו ${displayName}`}
-                    className="max-h-10 max-w-full object-contain"
+                    className="max-h-8 max-w-full object-contain sm:max-h-10"
                   />
                 ) : (
                   <div
@@ -48,10 +48,10 @@ export default function Home() {
                   />
                 )}
               </div>
-              <h2 className="line-clamp-2 text-base font-bold leading-tight">{displayName}</h2>
-              <div className="mt-auto flex items-baseline gap-1 pt-2">
-                <span className="text-xl font-bold">{party.seats}</span>
-                <span className="text-sm text-muted">מנדטים</span>
+              <h2 className="line-clamp-2 text-sm font-bold leading-tight sm:text-base">{displayName}</h2>
+              <div className="mt-auto flex items-baseline gap-1 pt-1.5 sm:pt-2">
+                <span className="text-lg font-bold sm:text-xl">{party.seats}</span>
+                <span className="text-xs text-muted sm:text-sm">מנדטים</span>
               </div>
             </Link>
           );
