@@ -186,7 +186,14 @@ export default async function LawPage({
         <section className="mb-8 rounded-xl bg-blue-50 px-4 py-3 text-sm leading-relaxed text-gray-700">
           <div className="mb-1 font-semibold text-blue-800">תקציר הצעת החוק</div>
           {summary}
-          <div className="mt-1.5 text-xs text-muted/70">מקור: אתר הכנסת</div>
+          <a
+            href={billUrl(billId)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-1.5 inline-block text-xs text-muted/70 hover:text-blue-700 hover:underline"
+          >
+            מקור: אתר הכנסת ←
+          </a>
         </section>
       )}
 
