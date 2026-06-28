@@ -165,6 +165,7 @@ export default async function LawsPage({
                 {y}
               </Link>
             ))}
+            <span className="w-full text-[11px] text-muted">לפי שנת הפעילות האחרונה בחוק (לא שנת ההגשה)</span>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <span className="w-10 text-xs text-muted">מיון:</span>
