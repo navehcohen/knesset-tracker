@@ -64,10 +64,27 @@ function pickDoc(docs) {
   return pick("קריאה הראשונה") || pick("מוקדם") || null;
 }
 
-async function downloadPdf(url, path) {
-  const res = await fetch(url, { headers: UA, signal: AbortSignal.timeout(25000) });
-  if (!res.ok) throw new Error(`PDF HTTP ${res.status}`);
-  await writeFile(path, Buffer.from(await res.arrayBuffer()));
+// הורדת PDF עם ניסיון חוזר. בריצה ארוכה שרת הקבצים (fs.knesset.gov.il) חוסם
+// זמנית בקצב גבוה ומחזיר 406/429/5xx, או שהחיבור נופל ("fetch failed") — שני
+// המקרים חולפים, אז מנסים שוב עם השהיה הולכת וגדלה (בניגוד ל-fetchJson, פעם זו
+// היחידה שבה איבדנו חוקים בריצה הקודמת).
+async function downloadPdf(url, path, tries = 4) {
+  for (let a = 1; ; a++) {
+    try {
+      const res = await fetch(url, { headers: UA, signal: AbortSignal.timeout(25000) });
+      if (res.status === 406 || res.status === 429 || res.status >= 500) {
+        if (a >= tries) throw new Error(`PDF HTTP ${res.status}`);
+        await new Promise((r) => setTimeout(r, a * 2000));
+        continue;
+      }
+      if (!res.ok) throw new Error(`PDF HTTP ${res.status}`);
+      await writeFile(path, Buffer.from(await res.arrayBuffer()));
+      return;
+    } catch (e) {
+      if (a >= tries) throw e;
+      await new Promise((r) => setTimeout(r, a * 2000));
+    }
+  }
 }
 
 // מחלץ "דברי הסבר" באמצעות סקריפט פייתון (PyMuPDF/fitz) — קורא נכון פריסת
