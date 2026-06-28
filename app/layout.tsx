@@ -10,7 +10,7 @@ const heebo = Heebo({
 });
 
 export const metadata: Metadata = {
-  title: "מעקב כנסת — כל המידע על חברי הכנסת",
+  title: "מעקב כנסת 25 — כל המידע על חברי הכנסת",
   description:
     "אתר שמנגיש לאזרחי ישראל את כל המידע על חברי הכנסת: הצבעות, חוקים, ועדות ועוד.",
 };
@@ -26,7 +26,7 @@ export default function RootLayout({
         <header className="sticky top-0 z-10 border-b border-border bg-background/80 backdrop-blur">
           <div className="mx-auto flex w-full max-w-5xl items-center gap-4 px-4 py-3">
             <Link href="/" className="shrink-0 text-lg font-bold">
-              מעקב כנסת
+              מעקב כנסת 25
             </Link>
             <div className="max-w-md flex-1">
               <SearchBox />

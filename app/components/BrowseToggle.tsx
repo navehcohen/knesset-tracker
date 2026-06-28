@@ -12,13 +12,13 @@ export default function BrowseToggle({
   return (
     <div className="mb-6 flex flex-wrap justify-center gap-2">
       <Link href="/" className={`${base} ${active === "parties" ? on : off}`}>
-        לפי מפלגה
+        מפלגה
       </Link>
       <Link href="/members" className={`${base} ${active === "members" ? on : off}`}>
-        לפי חברי הכנסת
+        חברי הכנסת
       </Link>
       <Link href="/laws" className={`${base} ${active === "laws" ? on : off}`}>
-        לפי חוקים
+        חוקים
       </Link>
     </div>
   );

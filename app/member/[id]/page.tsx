@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import BackButton from "../../components/BackButton";
 import {
   getMember,
   getParty,
@@ -310,12 +311,7 @@ export default async function MemberPage({
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-10">
-      <Link
-        href={`/party/${party.id}`}
-        className="text-sm text-muted hover:underline"
-      >
-        ← חזרה ל{party.name}
-      </Link>
+      <BackButton fallback={`/party/${party.id}`} />
 
       {/* כותרת הפרופיל */}
       <header className="mb-8 mt-4 flex items-center gap-4">
@@ -396,6 +392,12 @@ export default async function MemberPage({
           <div className="text-xs text-muted">נמנע</div>
         </div>
       </section>
+      {groups.length > 0 && (
+        <p className="-mt-6 mb-8 text-center text-xs text-muted">
+          המספרים מבוססים על {groups.length} ההצבעות שנשאבו עד כה לח״כ זה — ייתכן
+          שאינם מכסים את כלל הצבעותיו בקדנציה.
+        </p>
+      )}
 
       {/* ועדות שהח"כ חבר בהן — מכווץ מאחורי חץ (הרשימה ארוכה) */}
       {committees.length > 0 && (

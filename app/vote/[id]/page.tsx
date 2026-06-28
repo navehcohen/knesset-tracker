@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import BackButton from "../../components/BackButton";
 import { getVote, getVoteMemberChoices, type VoteChoice } from "../../data/knesset";
 
 const KNESSET_SEATS = 120;
@@ -53,9 +54,7 @@ export default async function VotePage({
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-10">
-      <Link href="/" className="text-sm text-muted hover:underline">
-        ← חזרה לעמוד הראשי
-      </Link>
+      <BackButton fallback="/" />
 
       <header className="mb-6 mt-4">
         <div className="flex items-start justify-between gap-3">

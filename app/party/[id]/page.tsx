@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import BackButton from "../../components/BackButton";
 import {
   getParty,
   getPartyMembers,
@@ -95,9 +96,7 @@ export default async function PartyPage({
 
   return (
     <main className="mx-auto w-full max-w-5xl px-4 py-10">
-      <Link href="/" className="text-sm text-muted hover:underline">
-        ← חזרה למפלגות
-      </Link>
+      <BackButton fallback="/" />
 
       <header className="mb-8 mt-4 flex items-center gap-4">
         <div

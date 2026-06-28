@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import BackButton from "../../components/BackButton";
 import {
   getBill,
   getBillInitiators,
@@ -159,9 +160,7 @@ export default async function LawPage({
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-10">
-      <Link href="/" className="text-sm text-muted hover:underline">
-        ← חזרה לעמוד הראשי
-      </Link>
+      <BackButton fallback="/" />
 
       {/* כותרת החוק */}
       <header className="mb-8 mt-4">
