@@ -85,14 +85,80 @@ function billRangeCutoff(range: BillRangeKey): Date | null {
   return d;
 }
 
-// כפתורי בחירת טווח (קישורים — הסינון מתבצע בצד השרת לפי ?bills=)
-function BillRangeTabs({ memberId, active }: { memberId: string; active: BillRangeKey }) {
+// --- סינון חוקים לפי מצב (עברו / בהליך) ---
+// המודל המנטלי של המשתמש: "חוקים שעברו" מול "חוקים בתהליך". "נעצר" נכלל ב"הכול".
+const BILL_STATUSES = [
+  { key: "all", label: "הכול" },
+  { key: "passed", label: "עברו" },
+  { key: "in_progress", label: "בהליך" },
+] as const;
+type BillStatusKey = (typeof BILL_STATUSES)[number]["key"];
+
+// בונה קישור לדף הח"כ תוך שמירת כל הבחירות (תקופה / מצב / עמוד הצבעות).
+// כך כל מסנן זוכר את בחירת השני, והמשתמש לא "מאבד" סינון כשהוא משנה אחד.
+function memberHref(
+  memberId: string,
+  opts: { bills?: BillRangeKey; status?: BillStatusKey; vp?: number; hash?: string }
+): string {
+  const qs = new URLSearchParams();
+  if (opts.bills && opts.bills !== "all") qs.set("bills", opts.bills);
+  if (opts.status && opts.status !== "all") qs.set("status", opts.status);
+  if (opts.vp) qs.set("vp", String(opts.vp));
+  const q = qs.toString();
+  return `/member/${memberId}${q ? `?${q}` : ""}${opts.hash ?? ""}`;
+}
+
+// כפתורי בחירת מצב החוק (קישורים — הסינון בצד השרת לפי ?status=).
+// כל כפתור מציג מונה כדי שהמשתמש יראה מיד כמה חוקים יש בכל מצב, בלי ללחוץ.
+function BillStatusTabs({
+  memberId,
+  active,
+  range,
+  counts,
+}: {
+  memberId: string;
+  active: BillStatusKey;
+  range: BillRangeKey;
+  counts: Record<BillStatusKey, number>;
+}) {
   return (
-    <div className="mb-3 flex flex-wrap gap-1.5">
+    <div className="flex flex-wrap items-center gap-1.5">
+      <span className="text-xs text-muted">מצב החוק:</span>
+      {BILL_STATUSES.map((s) => (
+        <Link
+          key={s.key}
+          href={memberHref(memberId, { bills: range, status: s.key })}
+          scroll={false}
+          className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+            active === s.key
+              ? "bg-blue-600 text-white"
+              : "border border-border text-muted hover:bg-card"
+          }`}
+        >
+          {s.label} ({counts[s.key]})
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+// כפתורי בחירת טווח (קישורים — הסינון מתבצע בצד השרת לפי ?bills=)
+function BillRangeTabs({
+  memberId,
+  active,
+  status,
+}: {
+  memberId: string;
+  active: BillRangeKey;
+  status: BillStatusKey;
+}) {
+  return (
+    <div className="flex flex-wrap items-center gap-1.5">
+      <span className="text-xs text-muted">תקופה:</span>
       {BILL_RANGES.map((r) => (
         <Link
           key={r.key}
-          href={r.key === "all" ? `/member/${memberId}` : `/member/${memberId}?bills=${r.key}`}
+          href={memberHref(memberId, { bills: r.key, status })}
           scroll={false}
           className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
             active === r.key
@@ -262,10 +328,10 @@ export default async function MemberPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ bills?: string; vp?: string }>;
+  searchParams: Promise<{ bills?: string; status?: string; vp?: string }>;
 }) {
   const { id } = await params;
-  const { bills: billsParam, vp: vpParam } = await searchParams;
+  const { bills: billsParam, status: statusParam, vp: vpParam } = await searchParams;
   const member = getMember(id);
   if (!member) notFound();
 
@@ -289,10 +355,25 @@ export default async function MemberPage({
   const inRange = (b: { lastUpdated: string }) =>
     !cutoff || (b.lastUpdated ? new Date(b.lastUpdated) >= cutoff : false);
 
-  // שלוש קבוצות לפי התפקיד הרשמי בחוק, בתוך הטווח שנבחר
-  const ledBills = allBills.filter((b) => isLead(b) && inRange(b)); // מציע ראשון
-  const coInitBills = allBills.filter((b) => b.isInitiator && !isLead(b) && inRange(b)); // יוזם עם אחרים
-  const coSignBills = allBills.filter((b) => !b.isInitiator && inRange(b)); // חתום בלבד
+  // סינון לפי מצב החוק שנבחר (ברירת מחדל: הכול)
+  const status: BillStatusKey = BILL_STATUSES.some((s) => s.key === statusParam)
+    ? (statusParam as BillStatusKey)
+    : "all";
+  const inStatus = (b: MemberBill) => status === "all" || b.category === status;
+
+  // מוני המצבים — מחושבים בתוך הטווח שנבחר (כדי שיתאימו למה שיוצג),
+  // ומוצגים על הכפתורים כדי שהמשתמש יראה מיד כמה יש בלי ללחוץ.
+  const billsInRange = allBills.filter(inRange);
+  const statusCounts: Record<BillStatusKey, number> = {
+    all: billsInRange.length,
+    passed: billsInRange.filter((b) => b.category === "passed").length,
+    in_progress: billsInRange.filter((b) => b.category === "in_progress").length,
+  };
+
+  // שלוש קבוצות לפי התפקיד הרשמי בחוק, בתוך הטווח והמצב שנבחרו
+  const ledBills = allBills.filter((b) => isLead(b) && inRange(b) && inStatus(b)); // מציע ראשון
+  const coInitBills = allBills.filter((b) => b.isInitiator && !isLead(b) && inRange(b) && inStatus(b)); // יוזם עם אחרים
+  const coSignBills = allBills.filter((b) => !b.isInitiator && inRange(b) && inStatus(b)); // חתום בלבד
   const passedLed = ledBills.filter((b) => b.category === "passed").length;
   const ledAllTime = allBills.filter(isLead).length; // בכל הקדנציה (להשוואה כשיש טווח)
   const shownLed = ledBills.slice(0, MAX_BILLS);
@@ -306,9 +387,9 @@ export default async function MemberPage({
   const votePages = Math.max(1, Math.ceil(groups.length / PER_PAGE_VOTES));
   const votePage = Math.min(Math.max(1, Number(vpParam) || 1), votePages);
   const shown = groups.slice((votePage - 1) * PER_PAGE_VOTES, votePage * PER_PAGE_VOTES);
-  // קישור לעמוד הצבעות, תוך שמירת טווח-החוקים שנבחר; עוגן #votes כדי לא לקפוץ למעלה
+  // קישור לעמוד הצבעות, תוך שמירת הבחירות שנבחרו; עוגן #votes כדי לא לקפוץ למעלה
   const votesPageHref = (p: number) =>
-    `/member/${id}?${range !== "all" ? `bills=${range}&` : ""}vp=${p}#votes`;
+    memberHref(id, { bills: range, status, vp: p, hash: "#votes" });
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-10">
@@ -445,9 +526,15 @@ export default async function MemberPage({
         </section>
       )}
 
-      {/* חוקים שקידם — מוצג מעל ההצבעות */}
+      {/* חוקים שקידם — מוצג מעל ההצבעות; מכווץ מאחורי חץ אך פתוח כברירת מחדל.
+          group/bills בעל-שם כדי לא להתנגש עם ה-details המקוננים שבתוכו. */}
       <section className="mb-8">
-        <h2 className="mb-3 text-xl font-bold">חוקים שקידם</h2>
+        <details className="group/bills" open>
+          <summary className="mb-3 flex cursor-pointer list-none items-center gap-2">
+            <h2 className="text-xl font-bold">חוקים שקידם</h2>
+            <span className="text-sm text-blue-600 group-open/bills:hidden">הצג ▾</span>
+            <span className="hidden text-sm text-blue-600 group-open/bills:inline">הסתר ▴</span>
+          </summary>
 
         {allBills.length === 0 ? (
           <p className="rounded-xl border border-border bg-card px-4 py-6 text-center text-sm text-muted">
@@ -455,8 +542,16 @@ export default async function MemberPage({
           </p>
         ) : (
           <>
-            {/* בחירת טווח זמן (לפי תאריך עדכון אחרון של החוק) */}
-            <BillRangeTabs memberId={id} active={range} />
+            {/* מסננים: מצב החוק (עם מונים) + טווח זמן — כל אחד שומר על בחירת השני */}
+            <div className="mb-3 space-y-2">
+              <BillStatusTabs
+                memberId={id}
+                active={status}
+                range={range}
+                counts={statusCounts}
+              />
+              <BillRangeTabs memberId={id} active={range} status={status} />
+            </div>
 
             {/* סיכום כן: המספר המרכזי הוא מה שהוביל בפועל (מציע ראשון) */}
             <p className="mb-1 text-sm">
@@ -491,7 +586,7 @@ export default async function MemberPage({
               </>
             ) : (
               <p className="rounded-xl border border-border bg-card px-4 py-4 text-center text-sm text-muted">
-                לא הוביל הצעות חוק כמציע ראשון בטווח הזה.
+                אין הצעות חוק שהוביל כמציע ראשון לפי הסינון הנוכחי.
               </p>
             )}
 
@@ -540,6 +635,7 @@ export default async function MemberPage({
             )}
           </>
         )}
+        </details>
       </section>
 
       {/* הצבעות (מקובצות לפי חוק) — עם דפדוף */}
