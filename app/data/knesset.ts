@@ -17,6 +17,7 @@ import partyLogosData from "./party-logos.json";
 import sessionProtocolsData from "./session-protocols.json";
 import billDocsData from "./bill-docs.json";
 import billExplanationsData from "./bill-explanations.json";
+import billExplanationsMissingData from "./bill-explanations-missing.json";
 import committeeLinksData from "./committee-links.json";
 
 export type Party = {
@@ -186,6 +187,16 @@ export function getBillsByCategory(category: BillCategory): Bill[] {
 // פרטי הצעת חוק לפי מזהה (undefined אם לא קיים בנתונים)
 export function getBill(billId: number): Bill | undefined {
   return billsById.get(billId);
+}
+
+// כל השנים שיש בהן פעילות חוקים (לפי lastUpdated), מהחדשה לישנה — לסינון בדף העיון
+export function getBillYears(): string[] {
+  const years = new Set<string>();
+  for (const b of billsById.values()) {
+    const y = (b.lastUpdated || "").slice(0, 4);
+    if (y) years.add(y);
+  }
+  return [...years].sort((a, b) => b.localeCompare(a));
 }
 
 // --- חיפוש חופשי בח"כים ובהצעות חוק/חוקים ---
@@ -364,6 +375,18 @@ export type BillExplanation = {
 const billExplanations: Record<string, BillExplanation> = billExplanationsData;
 export function getBillExplanation(billId: number): BillExplanation | null {
   return billExplanations[String(billId)] ?? null;
+}
+
+// כשאין דברי הסבר — *הסיבה*, כדי להציג באתר הודעה ממוקדת (ראו fetch-bill-explanations.mjs).
+//   no_doc  = לא נמצא מסמך הצעת חוק לקריאה ראשונה באתר הכנסת.
+//   no_text = נמצא מסמך, אך לא אותרו בו דברי הסבר (url = קישור למסמך לקריאה ידנית).
+export type BillExplanationMissing =
+  | { reason: "no_doc" }
+  | { reason: "no_text"; url: string };
+const billExplanationsMissing: Record<string, BillExplanationMissing> =
+  billExplanationsMissingData as Record<string, BillExplanationMissing>;
+export function getBillExplanationMissing(billId: number): BillExplanationMissing | null {
+  return billExplanationsMissing[String(billId)] ?? null;
 }
 
 // --- נתונים רשמיים על ח"כים נוכחיים (מה-API הרשמי MkLobby, ראו fetch-mk-official.mjs) ---

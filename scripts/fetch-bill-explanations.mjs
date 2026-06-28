@@ -124,8 +124,20 @@ async function main() {
     out = JSON.parse(await readFile(OUT_PATH, "utf8"));
   } catch {}
 
+  // חוקים שאין להם הסבר — נשמרת *הסיבה* כדי שהאתר יציג הודעה ממוקדת:
+  //   no_doc  = אין מסמך הצעת חוק לקריאה ראשונה באתר הכנסת
+  //   no_text = יש מסמך, אך לא אותרו בו דברי הסבר (url = קישור למסמך לקריאה ידנית)
+  const MISSING_PATH = join(DATA_DIR, "bill-explanations-missing.json");
+  let missing = {};
+  try {
+    missing = JSON.parse(await readFile(MISSING_PATH, "utf8"));
+  } catch {}
+
   // שמירה ביניים — כדי שהתקדמות לא תאבד אם הריצה הארוכה תיקטע
-  const save = () => writeFile(OUT_PATH, JSON.stringify(out, null, 2), "utf8");
+  const save = async () => {
+    await writeFile(OUT_PATH, JSON.stringify(out, null, 2), "utf8");
+    await writeFile(MISSING_PATH, JSON.stringify(missing, null, 2), "utf8");
+  };
 
   await mkdir(PDF_CACHE, { recursive: true });
 
@@ -170,17 +182,18 @@ async function main() {
         `${BASE}/KNS_DocumentBill?$filter=BillID eq ${billId}&$select=GroupTypeDesc,FilePath,LastUpdatedDate`
       );
       const doc = pickDoc(data.value || []);
-      if (!doc) { noDoc++; continue; }
+      if (!doc) { noDoc++; missing[billId] = { reason: "no_doc" }; continue; }
       const fileUrl = (doc.FilePath || "").replace(/\\/g, "/");
       if (!existsSync(pdfPath)) await downloadPdf(fileUrl, pdfPath);
       const explanation = extractExplanation(pdfPath, billId);
-      if (!explanation) { noExp++; continue; }
+      if (!explanation) { noExp++; missing[billId] = { reason: "no_text", url: fileUrl }; continue; }
       out[billId] = {
         text: explanation,
         source: (doc.GroupTypeDesc || "").trim(),
         date: (doc.LastUpdatedDate || "").slice(0, 10),
         url: fileUrl,
       };
+      delete missing[billId]; // אם הצליח עכשיו — להסיר מרשימת החסרים
       ok++;
     } catch (e) {
       err++;
