@@ -30,16 +30,16 @@ export default function Home() {
             <Link
               key={party.id}
               href={`/party/${party.id}`}
-              className="group flex h-48 flex-col rounded-2xl border border-border bg-card p-5 transition hover:-translate-y-0.5 hover:shadow-md"
+              className="group flex h-36 flex-col rounded-2xl border border-border bg-card p-4 transition hover:-translate-y-0.5 hover:shadow-md"
             >
               {/* לוגו המפלגה */}
-              <div className="mb-3 flex h-14 items-center justify-center">
+              <div className="mb-2 flex h-10 items-center justify-center">
                 {logo ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={logo}
                     alt={`לוגו ${displayName}`}
-                    className="max-h-14 max-w-full object-contain"
+                    className="max-h-10 max-w-full object-contain"
                   />
                 ) : (
                   <div
@@ -48,9 +48,9 @@ export default function Home() {
                   />
                 )}
               </div>
-              <h2 className="line-clamp-2 text-lg font-bold leading-tight">{displayName}</h2>
+              <h2 className="line-clamp-2 text-base font-bold leading-tight">{displayName}</h2>
               <div className="mt-auto flex items-baseline gap-1 pt-2">
-                <span className="text-2xl font-bold">{party.seats}</span>
+                <span className="text-xl font-bold">{party.seats}</span>
                 <span className="text-sm text-muted">מנדטים</span>
               </div>
             </Link>

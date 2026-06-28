@@ -1,11 +1,30 @@
 @import "tailwindcss";
 
+/* תצוגה: בהיר/כהה */
 :root {
   --background: #f7f7f5;
   --foreground: #1a1a1a;
   --card: #ffffff;
   --muted: #6b6b6b;
   --border: #e5e5e2;
+}
+
+/* מצב כהה — רק רקע האפליקציה כהה; הכרטיסים (הריבועים) נשארים בהירים */
+.dark {
+  --background: #15171a;
+  --foreground: #e8e8e6;
+  --muted: #9a9a96;
+  /* הכרטיסים והמסגרות נשארים בהירים בכוונה */
+  --card: #ffffff;
+  --border: #e5e5e2;
+}
+
+/* בתוך הכרטיס הבהיר מחזירים צבעי טקסט כהים כדי שיישאר קריא */
+.dark .bg-card {
+  --foreground: #1a1a1a;
+  --muted: #6b6b6b;
+  --border: #e5e5e2;
+  color: var(--foreground);
 }
 
 @theme inline {

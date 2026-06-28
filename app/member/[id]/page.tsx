@@ -13,6 +13,7 @@ import {
   getPhoto,
   getMkOfficial,
   getMemberCommittees,
+  getCommitteeUrl,
   type VoteChoice,
   type MemberVote,
   type BillCategory,
@@ -409,17 +410,37 @@ export default async function MemberPage({
               <span className="hidden text-sm text-blue-600 group-open:inline">הסתר ▴</span>
             </summary>
             <div className="mt-3 flex flex-wrap gap-2">
-              {committees.map((c) => (
-                <span
-                  key={c.committee}
-                  className="rounded-full border border-border px-3 py-1 text-xs text-muted"
-                >
-                  {c.committee}
-                  {c.isChair ? ' · יו"ר' : ""}
-                </span>
-              ))}
+              {committees.map((c) => {
+                const url = getCommitteeUrl(c.committee);
+                const label = (
+                  <>
+                    {c.committee}
+                    {c.isChair ? ' · יו"ר' : ""}
+                  </>
+                );
+                return url ? (
+                  <a
+                    key={c.committee}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rounded-full border border-border px-3 py-1 text-xs text-blue-700 transition hover:bg-blue-50"
+                  >
+                    {label} <span aria-hidden>↗</span>
+                  </a>
+                ) : (
+                  <span
+                    key={c.committee}
+                    className="rounded-full border border-border px-3 py-1 text-xs text-muted"
+                  >
+                    {label}
+                  </span>
+                );
+              })}
             </div>
-            <p className="mt-2 text-xs text-muted/70">מקור: אתר הכנסת.</p>
+            <p className="mt-2 text-xs text-muted/70">
+              מקור: אתר הכנסת. ועדות עם קישור (↗) מובילות לדף הוועדה באתר הכנסת.
+            </p>
           </details>
         </section>
       )}

@@ -17,6 +17,7 @@ import partyLogosData from "./party-logos.json";
 import sessionProtocolsData from "./session-protocols.json";
 import billDocsData from "./bill-docs.json";
 import billExplanationsData from "./bill-explanations.json";
+import committeeLinksData from "./committee-links.json";
 
 export type Party = {
   id: string;
@@ -383,6 +384,15 @@ export type Committee = { committee: string; role: string; isChair: boolean };
 const committees: Record<string, Committee[]> = committeesData as Record<string, Committee[]>;
 export function getMemberCommittees(memberId: string): Committee[] {
   return committees[memberId] ?? [];
+}
+
+// קישור לדף הוועדה באתר הכנסת (אפליקציית הוועדות החדשה), לפי שם הוועדה.
+// המיפוי שם→מזהה נשמר ב-committee-links.json (נאסף מדף הלובי הרשמי).
+// מחזיר null לוועדות שאין להן מיפוי (ועדות משותפות/חריגות) — אז לא יוצג קישור.
+const committeeLinks: Record<string, number> = committeeLinksData;
+export function getCommitteeUrl(name: string): string | null {
+  const id = committeeLinks[name];
+  return id ? `https://main.knesset.gov.il/apps/committees/${id}` : null;
 }
 
 // כתובת תמונת ח"כ. עדיפות: תמונה רשמית של הכנסת (נוכחיים) → תמונה מקומית מויקיפדיה

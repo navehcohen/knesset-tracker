@@ -37,17 +37,34 @@ const STATUSES: { key: BillCategory; label: string }[] = [
 
 const PER_PAGE = 50;
 
+const TYPES: { key: string; label: string }[] = [
+  { key: "all", label: "כל הסוגים" },
+  { key: "פרטית", label: "פרטית" },
+  { key: "ממשלתית", label: "ממשלתית" },
+  { key: "ועדה", label: "ועדה" },
+];
+
+const SORTS: { key: string; label: string }[] = [
+  { key: "updated", label: "מהמעודכן לישן" },
+  { key: "alpha", label: "לפי א–ת" },
+];
+
 export default async function LawsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string; page?: string }>;
+  searchParams: Promise<{ status?: string; page?: string; type?: string; sort?: string }>;
 }) {
   const sp = await searchParams;
   const status: BillCategory = STATUSES.some((s) => s.key === sp.status)
     ? (sp.status as BillCategory)
     : "passed";
+  const type = TYPES.some((t) => t.key === sp.type) ? (sp.type as string) : "all";
+  const sort = SORTS.some((s) => s.key === sp.sort) ? (sp.sort as string) : "updated";
 
-  const all = getBillsByCategory(status);
+  let all = getBillsByCategory(status); // ממוין מהמעודכן לישן כברירת מחדל
+  if (type !== "all") all = all.filter((b) => b.subType === type);
+  if (sort === "alpha") all = [...all].sort((a, b) => a.name.localeCompare(b.name, "he"));
+
   const totalPages = Math.max(1, Math.ceil(all.length / PER_PAGE));
   const page = Math.min(Math.max(1, Number(sp.page) || 1), totalPages);
   const shown = all.slice((page - 1) * PER_PAGE, page * PER_PAGE);
@@ -55,7 +72,19 @@ export default async function LawsPage({
   const pill = "rounded-full px-4 py-1.5 text-sm font-medium transition-colors";
   const on = "bg-blue-600 text-white";
   const off = "border border-border text-muted hover:bg-card";
-  const pageHref = (p: number) => `/laws?status=${status}&page=${p}`;
+  // בונה קישור עם שמירת הבחירות הקיימות (שינוי פילטר מאפס לעמוד 1)
+  const hrefWith = (next: { status?: string; type?: string; sort?: string; page?: number }) => {
+    const q = new URLSearchParams();
+    q.set("status", next.status ?? status);
+    const t = next.type ?? type;
+    if (t !== "all") q.set("type", t);
+    const s = next.sort ?? sort;
+    if (s !== "updated") q.set("sort", s);
+    if (next.page && next.page > 1) q.set("page", String(next.page));
+    return `/laws?${q.toString()}`;
+  };
+
+  const sortLabel = SORTS.find((s) => s.key === sort)?.label ?? "";
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-10">
@@ -63,14 +92,14 @@ export default async function LawsPage({
 
       <h1 className="mb-4 text-2xl font-bold">חוקים והצעות חוק</h1>
 
-      {/* מתג סטטוס (חוזר לעמוד 1) */}
+      {/* מתג סטטוס (חוזר לעמוד 1, שומר סוג/מיון) */}
       <div className="mb-2 flex flex-wrap gap-2">
         {STATUSES.map((s) => {
           const list = getBillsByCategory(s.key);
           return (
             <Link
               key={s.key}
-              href={`/laws?status=${s.key}`}
+              href={hrefWith({ status: s.key })}
               className={`${pill} ${status === s.key ? on : off}`}
             >
               {s.label} ({list.length})
@@ -79,9 +108,39 @@ export default async function LawsPage({
         })}
       </div>
 
+      {/* סינון לפי סוג + מיון */}
+      <div className="mb-2 flex flex-wrap items-center gap-2">
+        <span className="text-xs text-muted">סוג:</span>
+        {TYPES.map((t) => (
+          <Link
+            key={t.key}
+            href={hrefWith({ type: t.key })}
+            className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+              type === t.key ? on : off
+            }`}
+          >
+            {t.label}
+          </Link>
+        ))}
+      </div>
+      <div className="mb-2 flex flex-wrap items-center gap-2">
+        <span className="text-xs text-muted">מיון:</span>
+        {SORTS.map((s) => (
+          <Link
+            key={s.key}
+            href={hrefWith({ sort: s.key })}
+            className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+              sort === s.key ? on : off
+            }`}
+          >
+            {s.label}
+          </Link>
+        ))}
+      </div>
+
       <p className="mb-5 text-xs text-muted">
-        מוצגים {shown.length} מתוך {all.length} · עמוד {page} מתוך {totalPages} · ממוין
-        מהמעודכן לישן. מקור: אתר הכנסת.
+        מוצגים {shown.length} מתוך {all.length} · עמוד {page} מתוך {totalPages} · {sortLabel}.
+        מקור: אתר הכנסת.
       </p>
 
       {/* רשימת החוקים */}
@@ -90,20 +149,20 @@ export default async function LawsPage({
           <Link
             key={bill.billId}
             href={`/law/${bill.billId}`}
-            className="flex items-start gap-3 rounded-xl border border-border bg-card p-3 transition hover:-translate-y-0.5 hover:shadow-md"
+            className="block rounded-xl border border-border bg-card p-3 transition hover:-translate-y-0.5 hover:shadow-md"
           >
-            <span
-              className={`mt-0.5 shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${CATEGORY_BADGE[bill.category]}`}
-            >
-              {bill.statusDesc || bill.category}
-            </span>
-            <div className="min-w-0 flex-1">
-              <p className="font-medium leading-snug">{bill.name}</p>
+            <p className="font-medium leading-snug">{bill.name}</p>
+            <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1">
+              <span
+                className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${CATEGORY_BADGE[bill.category]}`}
+              >
+                {bill.statusDesc || bill.category}
+              </span>
               {bill.subType ? (
-                <p className="mt-0.5 text-xs text-muted">{bill.subType}</p>
+                <span className="text-xs text-muted">{bill.subType}</span>
               ) : null}
-              <MiniTally billId={bill.billId} />
             </div>
+            <MiniTally billId={bill.billId} />
           </Link>
         ))}
       </div>
@@ -112,7 +171,7 @@ export default async function LawsPage({
       {totalPages > 1 && (
         <div className="mt-6 flex items-center justify-center gap-3 text-sm">
           {page > 1 ? (
-            <Link href={pageHref(page - 1)} className={`${pill} ${off}`}>
+            <Link href={hrefWith({ page: page - 1 })} className={`${pill} ${off}`}>
               → הקודם
             </Link>
           ) : (
@@ -122,7 +181,7 @@ export default async function LawsPage({
             עמוד {page} / {totalPages}
           </span>
           {page < totalPages ? (
-            <Link href={pageHref(page + 1)} className={`${pill} ${off}`}>
+            <Link href={hrefWith({ page: page + 1 })} className={`${pill} ${off}`}>
               הבא ←
             </Link>
           ) : (
