@@ -150,7 +150,7 @@ export default async function MembersPage({
 
       {/* הח"כים הנוכחיים */}
       {isList ? (
-        <div className="grid gap-2 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           {shown.map((m) => (
             <ListRow key={m.id} member={m} />
           ))}
@@ -170,7 +170,7 @@ export default async function MembersPage({
             כיהנו בעבר ופרשו ({former.length})
           </h2>
           {isList ? (
-            <div className="grid gap-2 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
               {former.map((m) => (
                 <ListRow key={m.id} member={m} />
               ))}
