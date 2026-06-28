@@ -188,7 +188,7 @@ export default async function LawPage({
       )}
 
       {/* דברי הסבר — מתוך מסמך הצעת החוק לקריאה ראשונה (בלשון היוזם) */}
-      {explanation && (
+      {explanation ? (
         <section className="mb-8">
           <h2 className="mb-2 text-xl font-bold">דברי הסבר</h2>
           <details className="group rounded-xl border border-border bg-card px-4 py-3">
@@ -231,6 +231,26 @@ export default async function LawPage({
               </div>
             </div>
           </details>
+        </section>
+      ) : (
+        <section className="mb-8">
+          <h2 className="mb-2 text-xl font-bold">דברי הסבר</h2>
+          <div className="rounded-xl border border-border bg-card px-4 py-3 text-sm text-muted">
+            <p>לא נמצאו דברי הסבר לחוק זה באתר הכנסת.</p>
+            <p className="mt-1 text-muted/80">
+              דברי ההסבר מתפרסמים בדרך כלל במסמך &quot;הצעת חוק לקריאה הראשונה&quot;.
+            </p>
+            <div className="mt-3">
+              <a
+                href={billUrl(billId)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block rounded-full bg-gray-100 px-3 py-1 font-medium text-gray-700 hover:bg-gray-200"
+              >
+                🔗 לדף החוק באתר הכנסת ←
+              </a>
+            </div>
+          </div>
         </section>
       )}
 
