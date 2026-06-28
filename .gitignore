@@ -44,7 +44,7 @@ next-env.d.ts
 /scripts/_pdf-cache/
 
 # לוג הרצה של הרחבת דברי-ההסבר (זמני, נכתב בכל הרצה)
-/scripts/_expand.log
+/scripts/_expand*.log
 
 # הערות עבודה פנימיות — לא חלק מהאתר, לא להעלות לרשת
 /claude-notes/
