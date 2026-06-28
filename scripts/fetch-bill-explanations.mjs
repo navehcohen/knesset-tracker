@@ -121,7 +121,7 @@ async function main() {
     for (const billId of ids) {
       const pdfPath = join(PDF_CACHE, `${billId}.pdf`);
       try {
-        if (!existsSync(pdfPath)) await downloadPdf(out[billId].url, pdfPath);
+        if (!existsSync(pdfPath)) await downloadPdf((out[billId].url || "").replace(/\\/g, "/"), pdfPath);
         const text = extractExplanation(pdfPath, billId);
         if (text) { out[billId].text = text; changed++; }
         else fail++;
@@ -154,14 +154,15 @@ async function main() {
       );
       const doc = pickDoc(data.value || []);
       if (!doc) { noDoc++; continue; }
-      if (!existsSync(pdfPath)) await downloadPdf(doc.FilePath, pdfPath);
+      const fileUrl = (doc.FilePath || "").replace(/\\/g, "/");
+      if (!existsSync(pdfPath)) await downloadPdf(fileUrl, pdfPath);
       const explanation = extractExplanation(pdfPath, billId);
       if (!explanation) { noExp++; continue; }
       out[billId] = {
         text: explanation,
         source: (doc.GroupTypeDesc || "").trim(),
         date: (doc.LastUpdatedDate || "").slice(0, 10),
-        url: doc.FilePath,
+        url: fileUrl,
       };
       ok++;
     } catch (e) {

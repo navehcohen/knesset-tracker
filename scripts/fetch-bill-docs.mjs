@@ -38,10 +38,11 @@ async function fetchAll(table, filter, select) {
 // בוחר את נוסח החוק: קודם הרשמי (רשומות), אחרת הלא-רשמי
 function pickLawText(docs) {
   const norm = (s) => (s || "").trim();
+  const cleanUrl = (s) => (s || "").replace(/\\/g, "/");
   const official = docs.find((d) => norm(d.GroupTypeDesc).includes("פרסום ברשומות"));
-  if (official) return { url: official.FilePath, official: true };
+  if (official) return { url: cleanUrl(official.FilePath), official: true };
   const unofficial = docs.find((d) => norm(d.GroupTypeDesc).includes("נוסח לא רשמי"));
-  if (unofficial) return { url: unofficial.FilePath, official: false };
+  if (unofficial) return { url: cleanUrl(unofficial.FilePath), official: false };
   return null;
 }
 

@@ -211,14 +211,24 @@ export default async function LawPage({
               <p className="mt-1 text-muted/80">
                 הנוסח שהתקבל בפועל עשוי להיות שונה בעקבות דיוני הוועדה.
               </p>
-              <a
-                href={explanation.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-2 inline-block rounded-full bg-blue-50 px-3 py-1 font-medium text-blue-700 hover:bg-blue-100"
-              >
-                📄 למסמך המלא באתר הכנסת ←
-              </a>
+              <div className="mt-2 flex flex-wrap gap-2">
+                <a
+                  href={explanation.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block rounded-full bg-blue-50 px-3 py-1 font-medium text-blue-700 hover:bg-blue-100"
+                >
+                  📄 למסמך המלא באתר הכנסת ←
+                </a>
+                <a
+                  href={billUrl(billId)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block rounded-full bg-gray-100 px-3 py-1 font-medium text-gray-700 hover:bg-gray-200"
+                >
+                  🔗 לדף החוק באתר הכנסת ←
+                </a>
+              </div>
             </div>
           </details>
         </section>
