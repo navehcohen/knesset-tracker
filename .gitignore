@@ -40,6 +40,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# מטמון PDF מקומי של דברי-הסבר (הורדה חד-פעמית, לא חלק מהאתר)
+/scripts/_pdf-cache/
+
 # הערות עבודה פנימיות — לא חלק מהאתר, לא להעלות לרשת
 /claude-notes/
 /summary_ids.txt

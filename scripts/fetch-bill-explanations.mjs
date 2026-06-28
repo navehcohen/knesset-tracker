@@ -1,11 +1,16 @@
 // מחלץ את "דברי ההסבר" של חוקים שעברו, מתוך מסמך "הצעת חוק לקריאה הראשונה" הרשמי.
-// הרצה: node scripts/fetch-bill-explanations.mjs   (אחרי fetch-bills.mjs)
-// דורש: pdftotext (מגיע עם Git for Windows). רץ פעם אחת — שומר רק טקסט, לא PDF.
+// הרצה רגילה: node scripts/fetch-bill-explanations.mjs   (אחרי fetch-bills.mjs)
+//   — מוסיף רק חוקים חדשים שעדיין לא חולצו.
+// חילוץ-מחדש של הכול: REEXTRACT=1 node scripts/fetch-bill-explanations.mjs
+//   — מחלץ שוב את כל החוקים עם הסקריפט הנוכחי, מתוך מטמון ה-PDF (בלי הורדה חוזרת).
+// דורש: python + PyMuPDF (scripts/extract_explanation.py).
+// ה-PDFים נשמרים במטמון scripts/_pdf-cache/ (ב-.gitignore) להורדה חד-פעמית.
 // תוצאה: app/data/bill-explanations.json
 //   { billId: { text, source, date, url } }
 //   text=דברי ההסבר · source=סוג המסמך · date=תאריך המסמך · url=קישור ל-PDF המלא
 
-import { writeFile, readFile, unlink } from "node:fs/promises";
+import { writeFile, readFile, mkdir } from "node:fs/promises";
+import { existsSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
@@ -13,6 +18,9 @@ import { dirname, join } from "node:path";
 const BASE = "https://knesset.gov.il/OdataV4/ParliamentInfo";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = join(__dirname, "..", "app", "data");
+// מטמון PDF מקומי (ב-.gitignore): מורידים פעם אחת, ואז אפשר לחלץ מחדש מהר
+// (REEXTRACT=1) בלי להוריד שוב — שימושי אם מכווננים את סקריפט החילוץ.
+const PDF_CACHE = join(__dirname, "_pdf-cache");
 const UA = { "User-Agent": "Mozilla/5.0 (KnessetTracker educational project)" };
 const MAX_LEN = 6000; // קיצוץ ביטחון לטקסטים חריגים (הנוסח המלא ממילא בקישור)
 
@@ -102,6 +110,35 @@ async function main() {
   // שמירה ביניים — כדי שהתקדמות לא תאבד אם הריצה הארוכה תיקטע
   const save = () => writeFile(OUT_PATH, JSON.stringify(out, null, 2), "utf8");
 
+  await mkdir(PDF_CACHE, { recursive: true });
+
+  // מצב חילוץ-מחדש: מחלץ שוב את כל הרשומות הקיימות עם הסקריפט הנוכחי, מתוך
+  // ה-PDF במטמון (מוריד רק מה שחסר, לפי ה-url השמור). לא נוגע ב-source/date/url.
+  if (process.env.REEXTRACT) {
+    const ids = Object.keys(out);
+    console.log(`חילוץ-מחדש מהמטמון: ${ids.length} חוקים`);
+    let changed = 0, fail = 0, done = 0;
+    for (const billId of ids) {
+      const pdfPath = join(PDF_CACHE, `${billId}.pdf`);
+      try {
+        if (!existsSync(pdfPath)) await downloadPdf(out[billId].url, pdfPath);
+        const text = extractExplanation(pdfPath, billId);
+        if (text) { out[billId].text = text; changed++; }
+        else fail++;
+      } catch (e) {
+        fail++;
+        console.warn(`  שגיאה בחוק ${billId}: ${e.message}`);
+      }
+      if (++done % 25 === 0) {
+        console.log(`  ${done}/${ids.length} (חולצו ${changed}, נכשלו ${fail})`);
+        await save();
+      }
+    }
+    await save();
+    console.log(`\nסיום חילוץ-מחדש. עודכנו ${changed}, נכשלו ${fail}.`);
+    return;
+  }
+
   // חוקים שעברו קודם (כדי לסיים אותם מהר ולפרסם), ואז בהליך
   const todo = [...target.keys()]
     .filter((id) => !out[id])
@@ -110,15 +147,15 @@ async function main() {
 
   let ok = 0, noDoc = 0, noExp = 0, err = 0;
   for (const billId of todo) {
-    const tmp = join(__dirname, `_tmp_${billId}.pdf`);
+    const pdfPath = join(PDF_CACHE, `${billId}.pdf`);
     try {
       const data = await fetchJson(
         `${BASE}/KNS_DocumentBill?$filter=BillID eq ${billId}&$select=GroupTypeDesc,FilePath,LastUpdatedDate`
       );
       const doc = pickDoc(data.value || []);
       if (!doc) { noDoc++; continue; }
-      await downloadPdf(doc.FilePath, tmp);
-      const explanation = extractExplanation(tmp, billId);
+      if (!existsSync(pdfPath)) await downloadPdf(doc.FilePath, pdfPath);
+      const explanation = extractExplanation(pdfPath, billId);
       if (!explanation) { noExp++; continue; }
       out[billId] = {
         text: explanation,
@@ -130,8 +167,6 @@ async function main() {
     } catch (e) {
       err++;
       console.warn(`  שגיאה בחוק ${billId}: ${e.message}`);
-    } finally {
-      await unlink(tmp).catch(() => {});
     }
     await new Promise((r) => setTimeout(r, 150));
     if ((ok + noDoc + noExp + err) % 25 === 0) {
