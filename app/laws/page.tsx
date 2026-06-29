@@ -1,33 +1,7 @@
 import Link from "next/link";
-import { getBillsByCategory, getBillYears, getBillMainVote, type BillCategory } from "../data/knesset";
+import { getBillsByCategory, getBillYears, type BillCategory } from "../data/knesset";
 import BrowseToggle from "../components/BrowseToggle";
-
-// סרגל הצבעה קומפקטי (איפה שיש הצבעה סופית מקושרת לחוק)
-function MiniTally({ billId }: { billId: number }) {
-  const v = getBillMainVote(billId);
-  if (!v) return null;
-  const total = v.totalFor + v.totalAgainst + v.totalAbstain || 1;
-  return (
-    <div className="mt-2">
-      <div className="flex h-1.5 overflow-hidden rounded-full bg-gray-100">
-        <div className="bg-green-500" style={{ width: `${(v.totalFor / total) * 100}%` }} />
-        <div className="bg-red-500" style={{ width: `${(v.totalAgainst / total) * 100}%` }} />
-        <div className="bg-amber-400" style={{ width: `${(v.totalAbstain / total) * 100}%` }} />
-      </div>
-      <div className="mt-1 flex gap-3 text-[11px] text-muted">
-        <span className="text-green-700">בעד {v.totalFor}</span>
-        <span className="text-red-700">נגד {v.totalAgainst}</span>
-        <span className="text-amber-600">נמנע {v.totalAbstain}</span>
-      </div>
-    </div>
-  );
-}
-
-const CATEGORY_BADGE: Record<BillCategory, string> = {
-  passed: "bg-green-100 text-green-800",
-  in_progress: "bg-blue-100 text-blue-800",
-  stopped: "bg-gray-200 text-gray-700",
-};
+import BillCard from "../components/BillCard";
 
 const STATUSES: { key: BillCategory; label: string }[] = [
   { key: "passed", label: "עברו" },
@@ -192,24 +166,7 @@ export default async function LawsPage({
       {/* רשימת החוקים */}
       <div className="space-y-2">
         {shown.map((bill) => (
-          <Link
-            key={bill.billId}
-            href={`/law/${bill.billId}`}
-            className="block rounded-xl border border-border bg-card p-3 transition hover:-translate-y-0.5 hover:shadow-md"
-          >
-            <p className="font-medium leading-snug">{bill.name}</p>
-            <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1">
-              <span
-                className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${CATEGORY_BADGE[bill.category]}`}
-              >
-                {bill.statusDesc || bill.category}
-              </span>
-              {bill.subType ? (
-                <span className="text-xs text-muted">{bill.subType}</span>
-              ) : null}
-            </div>
-            <MiniTally billId={bill.billId} />
-          </Link>
+          <BillCard key={bill.billId} bill={bill} showTally />
         ))}
       </div>
 

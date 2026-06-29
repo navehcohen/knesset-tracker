@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { members, getParty, getPhoto, type Member, type Party } from "../data/knesset";
+import { members, getParty, type Member } from "../data/knesset";
 import BrowseToggle from "../components/BrowseToggle";
+import MemberAvatar from "../components/MemberAvatar";
 
 // שם פרטי = המילה הראשונה בשם (הסינון לפי אות והמיון לפי שם פרטי)
 function firstName(name: string): string {
@@ -10,35 +11,8 @@ function firstName(name: string): string {
 function firstLetter(name: string): string {
   return firstName(name).replace(/["'`׳״]/g, "").charAt(0);
 }
-function initials(name: string): string {
-  const parts = name.replace(/['"]/g, "").split(" ");
-  return parts.slice(0, 2).map((p) => p[0]).join("");
-}
 function byFirstName(a: Member, b: Member): number {
   return firstName(a.name).localeCompare(firstName(b.name), "he");
-}
-
-function Avatar({ member, party, size }: { member: Member; party?: Party; size: number }) {
-  const photo = getPhoto(member.id);
-  const isFormer = member.status === "former";
-  const cls = `shrink-0 rounded-full object-cover ${isFormer ? "grayscale" : ""}`;
-  if (photo) {
-    // eslint-disable-next-line @next/next/no-img-element
-    return <img src={photo} alt={member.name} className={cls} style={{ width: size, height: size }} />;
-  }
-  return (
-    <div
-      className="flex shrink-0 items-center justify-center rounded-full font-bold text-white"
-      style={{
-        width: size,
-        height: size,
-        fontSize: size / 3,
-        backgroundColor: isFormer ? "#9ca3af" : party?.color ?? "#6b7280",
-      }}
-    >
-      {initials(member.name)}
-    </div>
-  );
 }
 
 function GridCard({ member }: { member: Member }) {
@@ -50,7 +24,7 @@ function GridCard({ member }: { member: Member }) {
         member.status === "former" ? "opacity-70" : ""
       }`}
     >
-      <Avatar member={member} party={party} size={60} />
+      <MemberAvatar member={member} size={60} />
       <h2 className="mt-2 text-sm font-bold leading-tight sm:mt-3">{member.name}</h2>
       <p className="mt-1 line-clamp-2 text-xs text-muted">{party?.name ?? ""}</p>
     </Link>
@@ -66,7 +40,7 @@ function ListRow({ member }: { member: Member }) {
         member.status === "former" ? "opacity-70" : ""
       }`}
     >
-      <Avatar member={member} party={party} size={44} />
+      <MemberAvatar member={member} size={44} />
       <div className="min-w-0">
         <p className="truncate text-sm font-bold leading-tight">{member.name}</p>
         <p className="truncate text-xs text-muted">

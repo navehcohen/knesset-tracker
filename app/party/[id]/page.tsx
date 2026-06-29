@@ -2,12 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import BackButton from "../../components/BackButton";
+import MemberAvatar from "../../components/MemberAvatar";
 import {
   getParty,
   getPartyMembers,
-  getPhoto,
   type Member,
-  type Party,
 } from "../../data/knesset";
 
 export async function generateMetadata({
@@ -24,15 +23,8 @@ export async function generateMetadata({
   };
 }
 
-// מחזיר את ראשי התיבות של השם (לעיגול האווטאר)
-function initials(name: string): string {
-  const parts = name.replace(/['"]/g, "").split(" ");
-  return parts.slice(0, 2).map((p) => p[0]).join("");
-}
-
-function MemberCard({ member, party }: { member: Member; party: Party }) {
+function MemberCard({ member }: { member: Member }) {
   const isFormer = member.status === "former";
-  const photo = getPhoto(member.id);
   return (
     <Link
       href={`/member/${member.id}`}
@@ -40,23 +32,11 @@ function MemberCard({ member, party }: { member: Member; party: Party }) {
         isFormer ? "opacity-70" : ""
       }`}
     >
-      {photo ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={photo}
-          alt={member.name}
-          className={`mb-2 h-14 w-14 rounded-full object-cover sm:mb-3 sm:h-16 sm:w-16 ${
-            isFormer ? "grayscale" : ""
-          }`}
-        />
-      ) : (
-        <div
-          className="mb-2 flex h-14 w-14 items-center justify-center rounded-full text-sm font-bold text-white sm:mb-3 sm:h-16 sm:w-16"
-          style={{ backgroundColor: isFormer ? "#9ca3af" : party.color }}
-        >
-          {initials(member.name)}
-        </div>
-      )}
+      <MemberAvatar
+        member={member}
+        className="mb-2 h-14 w-14 sm:mb-3 sm:h-16 sm:w-16"
+        textClassName="text-sm"
+      />
       <h2 className="text-sm font-bold leading-tight sm:text-base">{member.name}</h2>
       {isFormer ? (
         member.roles.length > 0 ? (
@@ -111,7 +91,7 @@ export default async function PartyPage({
 
       <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
         {current.map((member) => (
-          <MemberCard key={member.id} member={member} party={party} />
+          <MemberCard key={member.id} member={member} />
         ))}
       </section>
 
@@ -122,7 +102,7 @@ export default async function PartyPage({
           </h2>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
             {former.map((member) => (
-              <MemberCard key={member.id} member={member} party={party} />
+              <MemberCard key={member.id} member={member} />
             ))}
           </div>
         </section>

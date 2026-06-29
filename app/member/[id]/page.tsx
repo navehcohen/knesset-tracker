@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import BackButton from "../../components/BackButton";
+import MemberAvatar from "../../components/MemberAvatar";
+import VoteTallyBar from "../../components/VoteTallyBar";
 import {
   getMember,
   getParty,
@@ -10,12 +12,10 @@ import {
   getBillInitiators,
   getSessionProtocol,
   getBillFinalText,
-  getPhoto,
   getMkOfficial,
   getMemberCommittees,
   getCommitteeUrl,
   type VoteChoice,
-  type MemberVote,
   type BillCategory,
   type MemberBill,
 } from "../../data/knesset";
@@ -293,32 +293,8 @@ function BillRow({ bill, memberId }: { bill: MemberBill; memberId: string }) {
   );
 }
 
-function initials(name: string): string {
-  const parts = name.replace(/['"]/g, "").split(" ");
-  return parts.slice(0, 2).map((p) => p[0]).join("");
-}
-
 function voteUrl(voteId: number): string {
   return `https://main.knesset.gov.il/Activity/plenum/Votes/Pages/vote.aspx?voteId=${voteId}`;
-}
-
-// מד בעד/נגד/נמנע לפי תוצאות ההצבעה
-function TallyBar({ vote }: { vote: MemberVote }) {
-  const total = vote.totalFor + vote.totalAgainst + vote.totalAbstain || 1;
-  return (
-    <div>
-      <div className="flex h-2 overflow-hidden rounded-full bg-gray-100">
-        <div className="bg-green-500" style={{ width: `${(vote.totalFor / total) * 100}%` }} />
-        <div className="bg-red-500" style={{ width: `${(vote.totalAgainst / total) * 100}%` }} />
-        <div className="bg-amber-400" style={{ width: `${(vote.totalAbstain / total) * 100}%` }} />
-      </div>
-      <div className="mt-1 flex gap-3 text-xs text-muted">
-        <span className="text-green-700">בעד {vote.totalFor}</span>
-        <span className="text-red-700">נגד {vote.totalAgainst}</span>
-        <span className="text-amber-600">נמנע {vote.totalAbstain}</span>
-      </div>
-    </div>
-  );
 }
 
 const PER_PAGE_VOTES = 40; // הצבעות/נושאים לעמוד (דפדוף)
@@ -337,7 +313,6 @@ export default async function MemberPage({
 
   const party = getParty(member.partyId)!;
   const groups = getMemberVoteGroups(id);
-  const photo = getPhoto(id);
   // פרטים רשמיים בסיסיים (לנוכחיים) — מפלגה מוצגת ממילא; כאן שנת לידה + מייל
   const official = getMkOfficial(id);
   const committees = getMemberCommittees(id);
@@ -397,26 +372,11 @@ export default async function MemberPage({
 
       {/* כותרת הפרופיל */}
       <header className="mb-6 mt-4 flex items-center gap-4 sm:mb-8">
-        {photo ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={photo}
-            alt={member.name}
-            className={`h-16 w-16 rounded-full object-cover sm:h-20 sm:w-20 ${
-              member.status === "former" ? "grayscale" : ""
-            }`}
-          />
-        ) : (
-          <div
-            className="flex h-16 w-16 items-center justify-center rounded-full text-xl font-bold text-white sm:h-20 sm:w-20"
-            style={{
-              backgroundColor:
-                member.status === "former" ? "#9ca3af" : party.color,
-            }}
-          >
-            {initials(member.name)}
-          </div>
-        )}
+        <MemberAvatar
+          member={member}
+          className="h-16 w-16 sm:h-20 sm:w-20"
+          textClassName="text-xl"
+        />
         <div className="min-w-0 flex-1">
           <h1 className="text-2xl font-bold sm:text-3xl">{member.name}</h1>
           <p className="mt-1 text-muted">{party.name}</p>
@@ -695,7 +655,7 @@ export default async function MemberPage({
                           {choiceLabel[main.choice]}
                         </span>
                       </div>
-                      <TallyBar vote={main} />
+                      <VoteTallyBar vote={main} />
                     </summary>
 
                     {/* תוכן מורחב (הכותרת כבר מופיעה למעלה — לא חוזרים עליה) */}

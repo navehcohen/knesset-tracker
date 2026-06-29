@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import BackButton from "../../components/BackButton";
+import VoteTallyBar from "../../components/VoteTallyBar";
 import { getVote, getVoteMemberChoices, type VoteChoice } from "../../data/knesset";
-
-const KNESSET_SEATS = 120;
 
 const choiceLabel: Record<VoteChoice, string> = {
   for: "בעד",
@@ -46,10 +45,6 @@ export default async function VotePage({
   if (!vote) notFound();
 
   const groups = getVoteMemberChoices(voteId);
-  const voted = vote.totalFor + vote.totalAgainst + vote.totalAbstain;
-  const total = voted || 1;
-  const notVoted = Math.max(0, KNESSET_SEATS - voted);
-  const cell = "rounded-lg border border-border bg-card px-2 py-1.5 text-center";
   const order: VoteChoice[] = ["for", "against", "abstain"];
 
   return (
@@ -74,29 +69,7 @@ export default async function VotePage({
 
       {/* התפלגות הקולות */}
       <section className="mb-6">
-        <div className="flex h-2 overflow-hidden rounded-full bg-gray-100">
-          <div className="bg-green-500" style={{ width: `${(vote.totalFor / total) * 100}%` }} />
-          <div className="bg-red-500" style={{ width: `${(vote.totalAgainst / total) * 100}%` }} />
-          <div className="bg-amber-400" style={{ width: `${(vote.totalAbstain / total) * 100}%` }} />
-        </div>
-        <div className="mt-2 grid grid-cols-4 gap-1.5 text-xs">
-          <div className={cell}>
-            <div className="font-bold text-green-700">{vote.totalFor}</div>
-            <div className="text-muted">בעד</div>
-          </div>
-          <div className={cell}>
-            <div className="font-bold text-red-700">{vote.totalAgainst}</div>
-            <div className="text-muted">נגד</div>
-          </div>
-          <div className={cell}>
-            <div className="font-bold text-amber-600">{vote.totalAbstain}</div>
-            <div className="text-muted">נמנע</div>
-          </div>
-          <div className={cell}>
-            <div className="font-bold text-gray-500">{notVoted}</div>
-            <div className="text-muted">לא הצביעו</div>
-          </div>
-        </div>
+        <VoteTallyBar vote={vote} variant="detailed" />
       </section>
 
       {/* מי הצביע ואיך */}
