@@ -189,6 +189,11 @@ export function getBill(billId: number): Bill | undefined {
   return billsById.get(billId);
 }
 
+// כל מזהי החוקים — לבניית דפים סטטיים מראש (generateStaticParams)
+export function getAllBillIds(): number[] {
+  return [...billsById.keys()];
+}
+
 // כל השנים שיש בהן פעילות חוקים (לפי lastUpdated), מהחדשה לישנה — לסינון בדף העיון
 export function getBillYears(): string[] {
   const years = new Set<string>();

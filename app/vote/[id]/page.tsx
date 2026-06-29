@@ -3,7 +3,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import BackButton from "../../components/BackButton";
 import VoteTallyBar from "../../components/VoteTallyBar";
-import { getVote, getVoteMemberChoices, type VoteChoice } from "../../data/knesset";
+import { votes, getVote, getVoteMemberChoices, type VoteChoice } from "../../data/knesset";
+
+// בניית דף סטטי מראש לכל הצבעה
+export const dynamicParams = false;
+export function generateStaticParams() {
+  return votes.map((v) => ({ id: String(v.voteId) }));
+}
 
 const choiceLabel: Record<VoteChoice, string> = {
   for: "בעד",

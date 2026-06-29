@@ -4,10 +4,17 @@ import { notFound } from "next/navigation";
 import BackButton from "../../components/BackButton";
 import MemberAvatar from "../../components/MemberAvatar";
 import {
+  parties,
   getParty,
   getPartyMembers,
   type Member,
 } from "../../data/knesset";
+
+// יוצרים מראש דף סטטי לכל מפלגה (במקום חישוב בזמן ריצה)
+export const dynamicParams = false;
+export function generateStaticParams() {
+  return parties.map((p) => ({ id: String(p.id) }));
+}
 
 export async function generateMetadata({
   params,

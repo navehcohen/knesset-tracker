@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import BackButton from "../../components/BackButton";
 import VoteTallyBar from "../../components/VoteTallyBar";
 import {
+  getAllBillIds,
   getBill,
   getBillInitiators,
   getBillVotes,
@@ -15,6 +16,12 @@ import {
   type BillCategory,
   type VoteChoice,
 } from "../../data/knesset";
+
+// בניית דף סטטי מראש לכל הצעת חוק
+export const dynamicParams = false;
+export function generateStaticParams() {
+  return getAllBillIds().map((id) => ({ id: String(id) }));
+}
 
 const choiceLabel: Record<VoteChoice, string> = {
   for: "בעד",
