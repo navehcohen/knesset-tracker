@@ -12,7 +12,7 @@ export default function BrowseToggle({
   return (
     <div className="mb-6 flex flex-wrap justify-center gap-2">
       <Link href="/" className={`${base} ${active === "parties" ? on : off}`}>
-        מפלגה
+        מפלגות
       </Link>
       <Link href="/members" className={`${base} ${active === "members" ? on : off}`}>
         חברי הכנסת

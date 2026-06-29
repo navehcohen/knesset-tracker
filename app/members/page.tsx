@@ -2,20 +2,20 @@ import Link from "next/link";
 import { members, getParty, getPhoto, type Member, type Party } from "../data/knesset";
 import BrowseToggle from "../components/BrowseToggle";
 
-// שם משפחה = המילה האחרונה בשם (אתר הכנסת ממיין לפי שם משפחה)
-function surname(name: string): string {
+// שם פרטי = המילה הראשונה בשם (הסינון לפי אות והמיון לפי שם פרטי)
+function firstName(name: string): string {
   const parts = name.trim().split(/\s+/);
-  return parts[parts.length - 1] || name;
+  return parts[0] || name;
 }
 function firstLetter(name: string): string {
-  return surname(name).replace(/["'`׳״]/g, "").charAt(0);
+  return firstName(name).replace(/["'`׳״]/g, "").charAt(0);
 }
 function initials(name: string): string {
   const parts = name.replace(/['"]/g, "").split(" ");
   return parts.slice(0, 2).map((p) => p[0]).join("");
 }
-function bySurname(a: Member, b: Member): number {
-  return surname(a.name).localeCompare(surname(b.name), "he");
+function byFirstName(a: Member, b: Member): number {
+  return firstName(a.name).localeCompare(firstName(b.name), "he");
 }
 
 function Avatar({ member, party, size }: { member: Member; party?: Party; size: number }) {
@@ -91,10 +91,10 @@ export default async function MembersPage({
   const isList = sp.view === "list";
   const letter = sp.letter || "";
 
-  const current = members.filter((m) => m.status === "current").sort(bySurname);
-  const former = members.filter((m) => m.status === "former").sort(bySurname);
+  const current = members.filter((m) => m.status === "current").sort(byFirstName);
+  const former = members.filter((m) => m.status === "former").sort(byFirstName);
 
-  // אותיות זמינות (לפי שם משפחה של הח"כים הנוכחיים)
+  // אותיות זמינות (לפי שם פרטי של הח"כים הנוכחיים)
   const letters = [...new Set(current.map((m) => firstLetter(m.name)))].sort((a, b) =>
     a.localeCompare(b, "he")
   );
@@ -116,7 +116,7 @@ export default async function MembersPage({
   const off = "border border-border text-muted hover:bg-card";
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-4 py-6 sm:py-10">
+    <main className="mx-auto w-full max-w-5xl px-4 py-4 sm:py-8">
       <BrowseToggle active="members" />
 
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
@@ -132,21 +132,27 @@ export default async function MembersPage({
         </div>
       </div>
 
-      {/* סינון לפי אות (שם משפחה) */}
-      <div className="mb-6 flex flex-wrap gap-1.5">
-        <Link href={hrefWith({ letter: "" })} className={`${pill} ${!letter ? on : off}`}>
-          הכל
-        </Link>
-        {letters.map((l) => (
-          <Link
-            key={l}
-            href={hrefWith({ letter: l })}
-            className={`${pill} ${letter === l ? on : off}`}
-          >
-            {l}
+      {/* סינון לפי אות (שם פרטי) — חץ קטן שפותח את רשימת האותיות */}
+      <details open={!!letter} className="group mb-6">
+        <summary className="inline-flex cursor-pointer list-none items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted transition-colors hover:bg-card">
+          <span>סינון לפי אות{letter ? `: ${letter}` : ""}</span>
+          <span className="text-[10px] leading-none transition-transform group-open:rotate-180">▼</span>
+        </summary>
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          <Link href={hrefWith({ letter: "" })} className={`${pill} ${!letter ? on : off}`}>
+            הכל
           </Link>
-        ))}
-      </div>
+          {letters.map((l) => (
+            <Link
+              key={l}
+              href={hrefWith({ letter: l })}
+              className={`${pill} ${letter === l ? on : off}`}
+            >
+              {l}
+            </Link>
+          ))}
+        </div>
+      </details>
 
       {/* הח"כים הנוכחיים */}
       {isList ? (

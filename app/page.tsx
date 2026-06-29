@@ -11,16 +11,10 @@ export default function Home() {
   const sorted = [...parties].sort((a, b) => b.seats - a.seats);
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-4 py-6 sm:py-10">
-      <header className="mb-6 text-center sm:mb-10">
-        {/* גודל נוזלי: גדל/מתכווץ ברצף לפי רוחב המסך (clamp) — בלי קפיצות */}
-        <h1 className="text-[clamp(1.5rem,6vw,2.25rem)] font-bold">מעקב כנסת 25</h1>
-        <p className="mt-2 text-sm text-muted sm:mt-3 sm:text-base">
-          כל המידע על חברי הכנסת במקום אחד — לפי מפלגה, חבר/ת כנסת או חוק
-        </p>
-      </header>
-
+    <main className="mx-auto w-full max-w-5xl px-4 py-4 sm:py-8">
       <BrowseToggle active="parties" />
+
+      <h1 className="mb-5 text-2xl font-bold">מפלגות הכנסת ה-25</h1>
 
       <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
         {sorted.map((party) => {

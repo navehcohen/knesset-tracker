@@ -102,10 +102,10 @@ export default async function LawsPage({
   const filtersActive = type !== "all" || year !== "all" || sort !== "updated";
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-4 py-10">
+    <main className="mx-auto w-full max-w-3xl px-4 py-4 sm:py-8">
       <BrowseToggle active="laws" />
 
-      <h1 className="mb-4 text-2xl font-bold">חוקים והצעות חוק</h1>
+      <h1 className="mb-5 text-2xl font-bold">חוקים והצעות חוק</h1>
 
       {/* מתג סטטוס (חוזר לעמוד 1, שומר סוג/מיון) */}
       <div className="mb-2 flex flex-wrap gap-2">
