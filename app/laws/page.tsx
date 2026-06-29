@@ -21,7 +21,6 @@ const TYPES: { key: string; label: string }[] = [
 const SORTS: { key: string; label: string }[] = [
   { key: "updated", label: "מהחדש לישן" },
   { key: "oldest", label: "מהישן לחדש" },
-  { key: "alpha", label: "לפי א–ת" },
 ];
 
 export default async function LawsPage({
@@ -43,7 +42,6 @@ export default async function LawsPage({
   if (type !== "all") all = all.filter((b) => b.subType === type);
   if (year !== "all") all = all.filter((b) => (b.lastUpdated || "").slice(0, 4) === year);
   if (sort === "oldest") all = [...all].sort((a, b) => (a.lastUpdated || "").localeCompare(b.lastUpdated || ""));
-  else if (sort === "alpha") all = [...all].sort((a, b) => a.name.localeCompare(b.name, "he"));
 
   const totalPages = Math.max(1, Math.ceil(all.length / PER_PAGE));
   const page = Math.min(Math.max(1, Number(sp.page) || 1), totalPages);
@@ -68,21 +66,24 @@ export default async function LawsPage({
 
   const sortLabel = SORTS.find((s) => s.key === sort)?.label ?? "";
   const typeLabel = TYPES.find((t) => t.key === type)?.label ?? "";
-  // תקציר הבחירות הפעילות, להצגה בכותרת הסרגל המקופל
-  const activeBits = [type !== "all" ? typeLabel : null, year !== "all" ? year : null, sortLabel]
+  // תקציר הבחירות הפעילות, להצגה על כפתור הסינון המקופל —
+  // רק בחירות שאינן ברירת-המחדל (כדי שכברירת מחדל יופיע רק "סינון ומיון")
+  const activeBits = [
+    type !== "all" ? typeLabel : null,
+    year !== "all" ? year : null,
+    sort !== "updated" ? sortLabel : null,
+  ]
     .filter(Boolean)
     .join(" · ");
-  // לפתוח את הסרגל אוטומטית אם יש סינון/מיון לא-ברירת-מחדל פעיל
-  const filtersActive = type !== "all" || year !== "all" || sort !== "updated";
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-4 sm:py-8">
       <BrowseToggle active="laws" />
 
-      <h1 className="mb-5 text-2xl font-bold">חוקים והצעות חוק</h1>
+      <h1 className="mb-3 text-2xl font-bold">חוקים והצעות חוק</h1>
 
-      {/* מתג סטטוס (חוזר לעמוד 1, שומר סוג/מיון) */}
-      <div className="mb-2 flex flex-wrap gap-2">
+      {/* שורה אחת: מתגי סטטוס + כפתור "סינון ומיון" מתקפל כתפריט צף — חוסך שורה בראש הדף */}
+      <div className="mb-4 flex flex-wrap items-center gap-2">
         {STATUSES.map((s) => {
           const list = getBillsByCategory(s.key);
           return (
@@ -95,70 +96,73 @@ export default async function LawsPage({
             </Link>
           );
         })}
+
+        {/* סינון ומיון — נפתח כתפריט צף (overlay) כדי לא להוסיף שורה לראש הדף */}
+        <details className="relative mr-auto">
+          <summary className="flex cursor-pointer list-none items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-sm font-medium text-muted hover:bg-card">
+            <span>סינון ומיון</span>
+            {activeBits ? (
+              <span className="text-xs font-normal text-blue-700">· {activeBits}</span>
+            ) : null}
+            <span className="text-xs">▾</span>
+          </summary>
+          <div className="absolute left-0 z-20 mt-2 w-[min(88vw,420px)] space-y-2 rounded-xl border border-border bg-card p-3 shadow-lg">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="w-10 text-xs text-muted">סוג:</span>
+              {TYPES.map((t) => (
+                <Link
+                  key={t.key}
+                  href={hrefWith({ type: t.key })}
+                  className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                    type === t.key ? on : off
+                  }`}
+                >
+                  {t.label}
+                </Link>
+              ))}
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="w-10 text-xs text-muted">שנה:</span>
+              <Link
+                href={hrefWith({ year: "all" })}
+                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                  year === "all" ? on : off
+                }`}
+              >
+                כל השנים
+              </Link>
+              {years.map((y) => (
+                <Link
+                  key={y}
+                  href={hrefWith({ year: y })}
+                  className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                    year === y ? on : off
+                  }`}
+                >
+                  {y}
+                </Link>
+              ))}
+              <span className="w-full text-[11px] text-muted">לפי שנת הפעילות האחרונה בחוק (לא שנת ההגשה)</span>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="w-10 text-xs text-muted">מיון:</span>
+              {SORTS.map((s) => (
+                <Link
+                  key={s.key}
+                  href={hrefWith({ sort: s.key })}
+                  className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                    sort === s.key ? on : off
+                  }`}
+                >
+                  {s.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </details>
       </div>
 
-      {/* סינון ומיון — מקופל כברירת מחדל כדי לא להכביד */}
-      <details open={filtersActive} className="mb-2 rounded-xl border border-border bg-card">
-        <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-3 py-2 text-sm font-medium">
-          <span>סינון ומיון</span>
-          <span className="text-xs font-normal text-muted">{activeBits}</span>
-        </summary>
-        <div className="space-y-2 border-t border-border px-3 py-3">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="w-10 text-xs text-muted">סוג:</span>
-            {TYPES.map((t) => (
-              <Link
-                key={t.key}
-                href={hrefWith({ type: t.key })}
-                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                  type === t.key ? on : off
-                }`}
-              >
-                {t.label}
-              </Link>
-            ))}
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="w-10 text-xs text-muted">שנה:</span>
-            <Link
-              href={hrefWith({ year: "all" })}
-              className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                year === "all" ? on : off
-              }`}
-            >
-              כל השנים
-            </Link>
-            {years.map((y) => (
-              <Link
-                key={y}
-                href={hrefWith({ year: y })}
-                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                  year === y ? on : off
-                }`}
-              >
-                {y}
-              </Link>
-            ))}
-            <span className="w-full text-[11px] text-muted">לפי שנת הפעילות האחרונה בחוק (לא שנת ההגשה)</span>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="w-10 text-xs text-muted">מיון:</span>
-            {SORTS.map((s) => (
-              <Link
-                key={s.key}
-                href={hrefWith({ sort: s.key })}
-                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                  sort === s.key ? on : off
-                }`}
-              >
-                {s.label}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </details>
-
-      <p className="mb-5 text-xs text-muted">
+      <p className="mb-4 text-xs text-muted">
         מוצגים {shown.length} מתוך {all.length} · עמוד {page} מתוך {totalPages} · {sortLabel}.
         מקור: אתר הכנסת.
       </p>

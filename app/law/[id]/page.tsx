@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import BackButton from "../../components/BackButton";
 import VoteTallyBar from "../../components/VoteTallyBar";
+import Explanation from "./Explanation";
 import {
   getAllBillIds,
   getBill,
@@ -168,49 +169,13 @@ export default async function LawPage({
 
       {/* דברי הסבר — מתוך מסמך הצעת החוק לקריאה ראשונה (בלשון היוזם) */}
       {explanation ? (
-        <section className="mb-8">
-          <h2 className="mb-2 text-xl font-bold">דברי הסבר</h2>
-          <details className="group rounded-xl border border-border bg-card px-4 py-3">
-            <summary className="cursor-pointer list-none">
-              <p className="whitespace-pre-line text-sm leading-relaxed text-gray-700 line-clamp-4 group-open:line-clamp-none">
-                {explanation.text}
-              </p>
-              <span className="mt-1 inline-block text-sm text-blue-600 hover:underline">
-                <span className="group-open:hidden">קרא עוד ▾</span>
-                <span className="hidden group-open:inline">הצג פחות ▴</span>
-              </span>
-            </summary>
-
-            {/* מקור + קישור למסמך המלא — בסוף הטקסט, להגעה קלה למקור */}
-            <div className="mt-3 border-t border-border pt-3 text-xs text-muted">
-              <p>
-                מקור: {explanation.source || "מסמך הצעת החוק"}
-                {explanation.date ? ` · ${explanation.date}` : ""} · אתר הכנסת (בלשון היוזם).
-              </p>
-              <p className="mt-1 text-muted/80">
-                הנוסח שהתקבל בפועל עשוי להיות שונה בעקבות דיוני הוועדה.
-              </p>
-              <div className="mt-2 flex flex-wrap gap-2">
-                <a
-                  href={explanation.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block rounded-full bg-blue-50 px-3 py-1 font-medium text-blue-700 hover:bg-blue-100"
-                >
-                  📄 למסמך המלא באתר הכנסת ←
-                </a>
-                <a
-                  href={billUrl(billId)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block rounded-full bg-gray-100 px-3 py-1 font-medium text-gray-700 hover:bg-gray-200"
-                >
-                  🔗 לדף החוק באתר הכנסת ←
-                </a>
-              </div>
-            </div>
-          </details>
-        </section>
+        <Explanation
+          text={explanation.text}
+          source={explanation.source ?? null}
+          date={explanation.date ?? null}
+          docUrl={explanation.url}
+          billUrl={billUrl(billId)}
+        />
       ) : (
         <section className="mb-8">
           <h2 className="mb-2 text-xl font-bold">דברי הסבר</h2>

@@ -93,40 +93,40 @@ export default async function MembersPage({
     <main className="mx-auto w-full max-w-5xl px-4 py-4 sm:py-8">
       <BrowseToggle active="members" />
 
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-bold">חברי הכנסת ה-25</h1>
-        {/* מתג רשת / רשימה */}
-        <div className="flex gap-2">
+        {/* פקדים: סינון לפי אות + מתג רשת/רשימה — באותה שורה */}
+        <div className="flex flex-wrap items-center gap-2">
+          {/* סינון לפי אות (שם פרטי) — נפתח כתפריט צף כדי לא להוסיף שורה */}
+          <details className="group relative">
+            <summary className="inline-flex cursor-pointer list-none items-center gap-1.5 rounded-full border border-border px-3 py-1 text-xs font-medium text-muted transition-colors hover:bg-card">
+              <span>סינון לפי אות{letter ? `: ${letter}` : ""}</span>
+              <span className="text-[10px] leading-none transition-transform group-open:rotate-180">▼</span>
+            </summary>
+            <div className="absolute right-0 z-20 mt-2 flex w-[min(88vw,340px)] flex-wrap gap-1.5 rounded-xl border border-border bg-card p-3 shadow-lg">
+              <Link href={hrefWith({ letter: "" })} className={`${pill} ${!letter ? on : off}`}>
+                הכל
+              </Link>
+              {letters.map((l) => (
+                <Link
+                  key={l}
+                  href={hrefWith({ letter: l })}
+                  className={`${pill} ${letter === l ? on : off}`}
+                >
+                  {l}
+                </Link>
+              ))}
+            </div>
+          </details>
+          {/* מתג רשת / רשימה */}
           <Link href={hrefWith({ view: "" })} className={`${pill} ${!isList ? on : off}`}>
-            ⊞ תצוגת רשת
+            ⊞ רשת
           </Link>
           <Link href={hrefWith({ view: "list" })} className={`${pill} ${isList ? on : off}`}>
-            ☰ תצוגת רשימה
+            ☰ רשימה
           </Link>
         </div>
       </div>
-
-      {/* סינון לפי אות (שם פרטי) — חץ קטן שפותח את רשימת האותיות */}
-      <details open={!!letter} className="group mb-6">
-        <summary className="inline-flex cursor-pointer list-none items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted transition-colors hover:bg-card">
-          <span>סינון לפי אות{letter ? `: ${letter}` : ""}</span>
-          <span className="text-[10px] leading-none transition-transform group-open:rotate-180">▼</span>
-        </summary>
-        <div className="mt-2 flex flex-wrap gap-1.5">
-          <Link href={hrefWith({ letter: "" })} className={`${pill} ${!letter ? on : off}`}>
-            הכל
-          </Link>
-          {letters.map((l) => (
-            <Link
-              key={l}
-              href={hrefWith({ letter: l })}
-              className={`${pill} ${letter === l ? on : off}`}
-            >
-              {l}
-            </Link>
-          ))}
-        </div>
-      </details>
 
       {/* הח"כים הנוכחיים */}
       {isList ? (
