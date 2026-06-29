@@ -4,6 +4,7 @@ import Link from "next/link";
 import "./globals.css";
 import SearchBox from "./components/SearchBox";
 import ThemeToggle from "./components/ThemeToggle";
+import NavProgress from "./components/NavProgress";
 
 // מוחל את מצב התצוגה השמור (כהה/בהיר) לפני הציור הראשון — מונע "הבהוב" של הצבעים.
 const themeInit = `(function(){try{var t=localStorage.getItem('theme');if(t==='dark')document.documentElement.classList.add('dark');}catch(e){}})();`;
@@ -35,6 +36,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
       </head>
       <body className="min-h-full flex flex-col">
+        <NavProgress />
         <header className="sticky top-0 z-10 border-b border-border bg-background/80 backdrop-blur">
           <div className="mx-auto flex w-full max-w-5xl items-center gap-4 px-4 py-3">
             <Link href="/" className="shrink-0 text-lg font-bold">
